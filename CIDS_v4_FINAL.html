@@ -2749,9 +2749,9 @@ renderDashboard();
                   (pFirebase.subcontractanti||[]).forEach(sF=>{if(!idSubCod.has(sF.id)) subFinal.push(sF);});
                   
                   return {...pCod, etape:etapeFinal, documente:documenteFinal, subcontractanti:subFinal,
-                    status:pFirebase.status||pCod.status,
-                    observatii:pFirebase.observatii||pCod.observatii,
-                    alerte:pFirebase.alerte||pCod.alerte
+                    status:pCod.status,
+                    observatii:pCod.observatii,
+                    alerte:pCod.alerte
                   };
                 });
                 renderDashboard();
