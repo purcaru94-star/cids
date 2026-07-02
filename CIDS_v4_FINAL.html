@@ -207,6 +207,47 @@
   .btn-edit-header{background:var(--white);color:var(--ink2);border:1.5px solid var(--grey-light);border-radius:8px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:0.83rem;font-weight:600;cursor:pointer;transition:all .15s;}
   .btn-edit-header:hover{border-color:var(--accent);color:var(--accent);}
 
+
+  /* TERMEN DEPASIT PE CARD */
+  .card-depasit{border:2px solid var(--red)!important;}
+
+  /* URGENT BANNER */
+  .urgent-banner{background:var(--red-light);border:1.5px solid var(--red);border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;gap:10px;align-items:flex-start;}
+  .urgent-banner-title{font-size:.8rem;font-weight:700;color:var(--red);margin-bottom:5px;}
+  .urgent-item{font-size:.78rem;color:var(--red);padding:2px 0;}
+
+  /* VALOARE TOTALA */
+  .stat-card.valoare{border-top:3px solid var(--green);}
+  .stat-num.small{font-size:1.1rem;}
+
+  /* FILTRARE BENEFICIAR */
+  .beneficiar-filter{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+  .benef-btn{background:var(--bg2);color:var(--ink3);border:1.5px solid var(--grey-light);border-radius:20px;padding:4px 12px;font-size:.72rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+  .benef-btn:hover,.benef-btn.active{background:var(--accent2);color:white;border-color:var(--accent2);}
+
+  /* CAUTARE GLOBALA DOCUMENTE */
+  .doc-search-modal{position:fixed;inset:0;background:rgba(15,17,23,0.7);z-index:300;display:none;align-items:flex-start;justify-content:center;padding:40px 16px;}
+  .doc-search-modal.open{display:flex;}
+  .doc-search-box{background:var(--white);border-radius:16px;padding:24px;width:100%;max-width:700px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-lg);}
+  .doc-search-result{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:8px;background:var(--bg);margin-bottom:6px;cursor:pointer;transition:background .15s;}
+  .doc-search-result:hover{background:var(--bg2);}
+  .doc-search-proj{font-size:.7rem;color:var(--ink3);font-weight:600;text-transform:uppercase;}
+  .doc-search-name{font-size:.85rem;font-weight:500;color:var(--ink);}
+
+  /* JURNAL */
+  .jurnal-entry{background:var(--bg);border-radius:8px;padding:10px 14px;margin-bottom:8px;border-left:3px solid var(--accent2);position:relative;}
+  .jurnal-entry:hover .jurnal-del{opacity:1;}
+  .jurnal-del{position:absolute;right:8px;top:8px;opacity:0;background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.8rem;transition:opacity .15s;}
+  .jurnal-date{font-size:.7rem;color:var(--ink3);font-weight:600;margin-bottom:3px;}
+  .jurnal-text{font-size:.83rem;color:var(--ink);line-height:1.5;}
+
+  /* ZILE RAMASE PE ETAPA */
+  .etapa-zile{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:10px;white-space:nowrap;}
+  .etapa-zile.ok{background:var(--green-light);color:var(--green);}
+  .etapa-zile.warn{background:var(--yellow-light);color:var(--yellow);}
+  .etapa-zile.danger{background:var(--red-light);color:var(--red);}
+  .etapa-zile.done{background:var(--bg2);color:var(--ink3);}
+
   @media(max-width:860px){
     .stats-row{grid-template-columns:repeat(3,1fr);}
     .projects-grid{grid-template-columns:1fr;}
@@ -226,6 +267,7 @@
   </div>
   <div style="display:flex;gap:8px;align-items:center;">
     <button class="btn-primary" style="background:#1a4db5" onclick="document.getElementById('import-input').click()">📥 Import</button>
+    <button class="btn-primary" style="background:#6c3483" onclick="resetFirebase()" title="Rescrie datele din cloud cu versiunea curentă din fișier">🔄 Reset cloud</button>
     <input type="file" id="import-input" accept=".json" style="display:none" onchange="importProiect(this)">
     <button class="btn-primary" style="background:#2d6a4f" id="btn-generator" onclick="openModal('generator',currentDetailId)" style="display:none">📄 Generează</button>
     <button class="btn-primary" onclick="openModal('project')">+ Proiect nou</button>
@@ -236,12 +278,14 @@
 <div class="page active" id="dashboard">
   <div class="page-title">Portofoliu Proiecte</div>
   <div class="page-subtitle" id="sub-date">CIDS — Compania de Investiții și Dezvoltare Sectorul 1 SA</div>
+  <div id="urgent-banner-container"></div>
   <div class="stats-row">
     <div class="stat-card all" onclick="filterProjects('all',this)"><div class="stat-num" id="cnt-all">0</div><div class="stat-label">Total proiecte</div></div>
     <div class="stat-card executie" onclick="filterProjects('În execuție',this)"><div class="stat-num" id="cnt-exec">0</div><div class="stat-label">În execuție</div></div>
     <div class="stat-card semnare" onclick="filterProjects('Semnare',this)"><div class="stat-num" id="cnt-semn">0</div><div class="stat-label">Semnare</div></div>
     <div class="stat-card suspendat" onclick="filterProjects('Suspendat',this)"><div class="stat-num" id="cnt-susp">0</div><div class="stat-label">Suspendat</div></div>
     <div class="stat-card finalizat" onclick="filterProjects('Finalizat',this)"><div class="stat-num" id="cnt-fin">0</div><div class="stat-label">Finalizate</div></div>
+    <div class="stat-card valoare" style="cursor:default"><div class="stat-num small" id="cnt-valoare">—</div><div class="stat-label">Valoare totală contracte active</div></div>
   </div>
   <div class="filter-row">
     <span class="filter-label">Filtru:</span>
@@ -251,7 +295,13 @@
     <button class="filter-btn" onclick="filterProjects('Suspendat',this)">Suspendat</button>
     <button class="filter-btn" onclick="filterProjects('Finalizat',this)">Finalizat</button>
     <button class="filter-btn" onclick="filterProjects('Închis',this)">Închis</button>
+    <button class="filter-btn" onclick="openDocSearch()" style="background:var(--blue-light);color:var(--blue);border-color:var(--blue)">🔍 Documente</button>
+    <button class="filter-btn" onclick="exportRaportLunar()" style="background:var(--green-light);color:var(--green);border-color:var(--green)">📊 Raport</button>
     <input type="text" class="search-input" placeholder="🔍 Caută proiect..." oninput="searchProjects(this.value)">
+  </div>
+  <div class="beneficiar-filter" id="benef-filter">
+    <span style="font-size:.72rem;color:var(--ink3);font-weight:600">Beneficiar:</span>
+    <button class="benef-btn active" onclick="filterBeneficiar(null,this)">Toți</button>
   </div>
   <div class="projects-grid" id="projects-grid"></div>
 </div>
@@ -263,6 +313,18 @@
 </div>
 
 <!-- MODAL -->
+<!-- CAUTARE GLOBALA DOCUMENTE -->
+<div class="doc-search-modal" id="doc-search-modal">
+  <div class="doc-search-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div style="font-family:'DM Serif Display',sans-serif;font-size:1.2rem;color:var(--ink)">🔍 Caută în toate documentele</div>
+      <button onclick="document.getElementById('doc-search-modal').classList.remove('open')" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--ink3)">✕</button>
+    </div>
+    <input type="text" id="doc-search-input" class="search-input" style="width:100%;margin-bottom:14px;font-size:1rem" placeholder="Caută document după nume..." oninput="searchDocs(this.value)">
+    <div id="doc-search-results"></div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal" id="modal-box">
     <div class="modal-title" id="modal-title">—</div>
@@ -286,8 +348,27 @@ function zilesClass(z,s){if(s==='Finalizat'||s==='Închis'||s==='Predat')return 
 function fmtMoney(v){if(!v)return '—';return Number(v).toLocaleString('ro-RO',{minimumFractionDigits:0,maximumFractionDigits:0})+' lei';}
 function scKey(s){const m={'În execuție':'executie','Semnare':'semnare','Suspendat':'suspendat','Finalizat':'finalizat','Închis':'inchis','Predat':'predat'};return m[s]||'executie';}
 function badgeHtml(s){const k=scKey(s);return `<span class="badge badge-${k}">${s}</span>`;}
-function tlDot(s){if(s==='FINALIZAT')return{cls:'dot-done',lbl:'✓'};if(s==='ÎN TERMEN')return{cls:'dot-progress',lbl:'⏳'};if(s==='DEPĂȘIT')return{cls:'dot-danger',lbl:'!'};if(s==='SUSPENDAT')return{cls:'dot-warn',lbl:'⏸'};return{cls:'dot-empty',lbl:'·'};}
-function tsBadge(s){const m={'FINALIZAT':'badge-finalizat','ÎN TERMEN':'badge-executie','DEPĂȘIT':'','SUSPENDAT':'badge-semnare'};const cls=m[s]||'';const bg={'FINALIZAT':'','ÎN TERMEN':'','DEPĂȘIT':'background:var(--red-light);color:var(--red)','SUSPENDAT':'background:var(--yellow-light);color:var(--yellow)'};return s?`<span class="badge ${cls}" style="${bg[s]||''}">${s}</span>`:'';} 
+function etapaEsteDepasita(e,p){
+  if(e.status==='FINALIZAT') return false;
+  const tms=calcTermenEtapaMs(e,p);
+  if(!tms) return false;
+  return tms < Date.now();
+}
+function tlDot(s,depasit){
+  if(depasit) return {cls:'dot-danger',lbl:'!'};
+  if(s==='FINALIZAT') return {cls:'dot-done',lbl:'✓'};
+  if(s==='ÎN TERMEN') return {cls:'dot-progress',lbl:'⏳'};
+  if(s==='DEPĂȘIT') return {cls:'dot-danger',lbl:'!'};
+  if(s==='SUSPENDAT') return {cls:'dot-warn',lbl:'⏸'};
+  return {cls:'dot-empty',lbl:'·'};
+}
+function tsBadge(s,depasit){
+  if(depasit) return `<span class="badge" style="background:var(--red-light);color:var(--red)">⚠ DEPĂȘIT</span>`;
+  const m={'FINALIZAT':'badge-finalizat','ÎN TERMEN':'badge-executie','DEPĂȘIT':'','SUSPENDAT':'badge-semnare'};
+  const cls=m[s]||'';
+  const bg={'FINALIZAT':'','ÎN TERMEN':'','DEPĂȘIT':'background:var(--red-light);color:var(--red)','SUSPENDAT':'background:var(--yellow-light);color:var(--yellow)'};
+  return s?`<span class="badge ${cls}" style="${bg[s]||''}">${s}</span>`:'';
+}
 function progressPct(ds,tf){const s=typeof ds==='number'?excelDate(ds):new Date(ds);const e=typeof tf==='number'?excelDate(tf):new Date(tf);if(!s||!e||isNaN(s)||isNaN(e))return 0;const now=new Date();return Math.min(100,Math.max(0,Math.round((now-s)/(e-s)*100)));}
 function calcTermenEfectiv(p){
   // Returneaza DOAR termenul unui OI activ (nu Finalizat, nu Neemis)
@@ -295,6 +376,30 @@ function calcTermenEfectiv(p){
   if(!oi.length) return null;
   const activ=oi.find(o=>o.termen&&(o.status==='În execuție'||o.status==='În curs'));
   if(activ&&activ.termen) return new Date(activ.termen);
+  return null;
+}
+
+function calcTermenEtapa(etapa, p){
+  // Calculeaza termenul dinamic al unei etape in functie de OI
+  if(etapa.termen) return etapa.termen; // Are deja termen fix
+  if(!etapa.obs) return null;
+  // Incearca sa extraga "X zile de la OI" din obs
+  const oi=p.ordineIncepere||[];
+  const oiActiv=oi.find(o=>o.data&&o.status!=='Neemis'&&!o.status?.includes('Neemis'));
+  if(!oiActiv||!oiActiv.data) return null;
+  const match=etapa.obs.match(/(\d+)\s+zile\s+de\s+la\s+OI/i)||etapa.eveniment.match(/\((\d+)\s+zile\s+de\s+la\s+OI\)/i);
+  if(!match) return null;
+  const zile=parseInt(match[1]);
+  const dataOI=new Date(oiActiv.data);
+  dataOI.setDate(dataOI.getDate()+zile);
+  return Math.round(dataOI.getTime()/86400000+25569); // Returneaza ca Excel serial
+}
+
+function calcTermenEtapaMs(etapa, p){
+  const t=calcTermenEtapa(etapa, p);
+  if(!t) return null;
+  if(typeof t==='number') return (t-25569)*86400000;
+  if(typeof t==='string') return new Date(t).getTime();
   return null;
 }
 function getOrdineIncepereHtml(p){
@@ -312,7 +417,7 @@ function getOrdineIncepereHtml(p){
 
 // ===================== DATA =====================
 let proiecte=[
-  {id:1,titlu:"Scoala de surzi",nrDGPI:"DGPI 6/29.12.2025",nrCIDS:"CIDS 56/29.12.2025",contractLink:"https://drive.google.com/file/d/1lxz0cWe9DoB7rn9kNTmutv1gFUoq2PyR/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:1091212,dataSemnare:46020,termenFinalizare:46446,tip:"Proiectare + Execuție",status:"În execuție",gbe:"55.494,48 lei (5%) — Trezorerie",gbeRestituire:"70% la PV receptie terminare lucrari, 30% la receptie finala dupa 36 luni",observatii:"Contract proiectare 2 luni + executie 12 luni. Penalitati: 0,1%/zi. Plata: 30 zile de la factura. Garantie: 36 luni. In asteptarea emiterii Autorizatiei de Construire de catre PMB.",ordineIncepere:[{tip:"Proiectare",data:"2026-01-12",durata:60,termen:"2026-03-12",status:"Finalizat"},{tip:"Execuție",data:null,durata:365,termen:null,status:"Neemis — așteptare AC PMB"}],sistari:[],acteAditionale:[],
+  {id:1,titlu:"Scoala de surzi",nrDGPI:"DGPI 6/29.12.2025",nrCIDS:"CIDS 56/29.12.2025",contractLink:"https://drive.google.com/file/d/1lxz0cWe9DoB7rn9kNTmutv1gFUoq2PyR/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:1091212,dataSemnare:46020,termenFinalizare:null,tip:"Proiectare + Execuție",status:"În execuție",gbe:"55.494,48 lei (5%) — Trezorerie",gbeRestituire:"70% la PV receptie terminare lucrari, 30% la receptie finala dupa 36 luni",observatii:"Contract proiectare 2 luni + executie 12 luni. Penalitati: 0,1%/zi. Plata: 30 zile de la factura. Garantie: 36 luni. In asteptarea emiterii Autorizatiei de Construire de catre PMB.",ordineIncepere:[{tip:"Proiectare",data:"2026-01-12",durata:60,termen:"2026-03-12",status:"Finalizat"},{tip:"Execuție",data:null,durata:365,termen:null,status:"Neemis — așteptare AC PMB"}],sistari:[],acteAditionale:[],
    etape:[
     {id:'e1-1',eveniment:"Solicitare declaratie conformitate DIMP 1267/11.12.2025",data:46006,termen:46006,status:"FINALIZAT",obs:"Solicitare declaratie art.31 Legea 98/2016",docLink:"https://drive.google.com/file/d/11GHNhWEPXfHzJbUA2BJMbqj1FqF1o_sA/view",docNume:"1. Solicitare declaratie Sc.Surzi"},
     {id:'e1-2',eveniment:"Declaratie conformitate CIDS 2032/12.12.2025",data:46007,termen:46007,status:"FINALIZAT",obs:"Declaratie indeplinire conditii art.31",docLink:"https://drive.google.com/file/d/1R9feEF0y35-I27EV47WawHGA6TPT88Nv/view",docNume:"2. Declaratie Sc.Surzi"},
@@ -410,7 +515,7 @@ let proiecte=[
     {id:'e2-27',eveniment:"ATELIER RIDA Ordin sistare 26/28.05.2026",data:46179,termen:46179,status:"FINALIZAT",obs:"Sistare ATELIER RIDA pana la CU",docLink:"https://drive.google.com/file/d/1a55RoUdrMn05RN6pILa-3h2W2ZHKLVrc/view",docNume:"26. ATELIER RIDA Ordin sistare USAMV"},
     {id:'e2-28',eveniment:"PV predare primire ATELIER RIDA studiu istoric 35/29.05.2026",data:46180,termen:46180,status:"FINALIZAT",obs:"Studiu istoric predat in 3 exemplare + electronic",docLink:"https://drive.google.com/file/d/1jbdvSwOCEC9O8Z1qKqwb1lGmRKdtT_23/view",docNume:"35. PV predare ATELIER RIDA studiu istoric"},
     {id:'e2-29',eveniment:"ATELIER RIDA Factura FF 216/02.06.2026 studiu istoric",data:46184,termen:46184,status:"FINALIZAT",obs:"Factura servicii studiu istoric",docLink:"https://drive.google.com/file/d/1SRKsy0LjSw2SirTNN4ed8xDXLeTl3bX_/view",docNume:"36. ATELIER RIDA Factura studiu istoric"},
-    {id:'e2-30',eveniment:"Reluare servicii proiectare dupa obtinere CU — termen predare SF 30.06-03.07.2026",data:null,termen:46212,status:"ÎN TERMEN",obs:"Termen predare SF estimat 30.06-03.07.2026"},
+    {id:'e2-30',eveniment:"Reluare servicii proiectare dupa obtinere CU — termen predare SF 30.06-03.07.2026",data:null,termen:46211,status:"ÎN TERMEN",obs:"Termen predare SF estimat 30.06-03.07.2026"},
     {id:'e2-31',eveniment:"PV Predare NCS Project studiu trafic+NZEB USAMV 17.06.2026",data:46195,termen:46195,status:"FINALIZAT",obs:"PV predare-primire studiu trafic si NZEB de la NCS PROJECT dupa reluarea serviciilor",docLink:"https://drive.google.com/file/d/1xl7hG0U7aRiJ1-GVPKdhhJ5i3DnCYuiX/view",docNume:"37. PV Predare NCS Project USAMV"}
    ],
    subcontractanti:[
@@ -536,7 +641,7 @@ let proiecte=[
     {nume:"Imputernicire FOCUS - vizita amplasament Prometeu",tip:"Altele",data:"20.04.2026",link:"https://drive.google.com/file/d/1D7fney2tF1Rg1lI8vuktvPfwcJnP6gzF/view",obs:"Imputernicire vizita amplasament Pol. Locala Prometeu"},
     {nume:"Imputernicire FOCUS - Spataru Bogdan",tip:"Altele",data:"20.04.2026",link:"https://drive.google.com/file/d/1OSEZp38JL26usRp29W3CIX0Bwzrx95rT/view",obs:"Imputernicire Spataru Bogdan vizita amplasament"}
    ]},
-    {id:4,titlu:"2.1 Scoala IH Radulescu PT si Executie",nrDGPI:"DGPI 3/04.11.2025",nrCIDS:"CIDS 36/04.11.2025",contractLink:"https://drive.google.com/file/d/162L5-eqeZdR6Ejp9TKU1BrHQRB5XZgcs/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:4801118.60,dataSemnare:45965,termenFinalizare:46198,tip:"Proiectare + Execuție",status:"În execuție",gbe:"Polita asigurare 5% = 240.055,93 lei",gbeRestituire:"70% la PV receptie terminare lucrari, 30% la receptie finala dupa 24 luni",observatii:"Valoare initiala: 4.422.465,60 lei. AA1/24.12.2025 suplimentare 378.653 lei → Total: 4.801.118,60 lei fara TVA. OI executie: 14.01.2026, termen contractual 4 luni → 14.05.2026. Sistare lucrari 20.01.2026 — reluare 02.03.2026 (41 zile sistare, conditii meteo). Termen executie ajustat cu sistarea: 24.06.2026. Penalitati: 0,1%/zi. Garantie: 24 luni.",ordineIncepere:[{tip:"Proiectare",data:"2025-11-04",durata:60,termen:"2026-01-04",status:"Finalizat"},{tip:"Execuție construcții provizorii DGPI3",data:"2026-01-14",durata:120,termen:"2026-06-24",status:"Finalizat — sistare 41 zile (20.01-02.03.2026) inclusa in termen"},{tip:"Execuție org. șantier C11",data:"2026-04-06",durata:120,termen:"2026-08-06",status:"În execuție — prelungire solicitată 31.08.2026"}],sistari:[{dataStart:"2026-01-20",dataStop:"2026-03-02"}],acteAditionale:[{data:"2025-12-24",descriere:"AA1 DGPI3 — suplimentare valoare +378.653 lei",termenNou:null},{data:"2026-03-26",descriere:"AA1 C11 — modalitate plată per asociat (ALA 2%, TNG 98%)",termenNou:null}],
+    {id:4,titlu:"2.1 Scoala IH Radulescu PT si Executie",nrDGPI:"DGPI 3/04.11.2025",nrCIDS:"CIDS 36/04.11.2025",contractLink:"https://drive.google.com/file/d/162L5-eqeZdR6Ejp9TKU1BrHQRB5XZgcs/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:4801118.60,dataSemnare:45965,termenFinalizare:46238,tip:"Proiectare + Execuție",status:"În execuție",gbe:"Polita asigurare 5% = 240.055,93 lei",gbeRestituire:"70% la PV receptie terminare lucrari, 30% la receptie finala dupa 24 luni",observatii:"Valoare initiala: 4.422.465,60 lei. AA1/24.12.2025 suplimentare 378.653 lei → Total: 4.801.118,60 lei fara TVA. OI executie: 14.01.2026, termen contractual 4 luni → 14.05.2026. Sistare lucrari 20.01.2026 — reluare 02.03.2026 (41 zile sistare, conditii meteo). Termen executie ajustat cu sistarea: 24.06.2026. Penalitati: 0,1%/zi. Garantie: 24 luni.",ordineIncepere:[{tip:"Proiectare",data:"2025-11-04",durata:60,termen:"2026-01-04",status:"Finalizat"},{tip:"Execuție construcții provizorii DGPI3",data:"2026-01-14",durata:120,termen:"2026-06-24",status:"Finalizat — sistare 41 zile (20.01-02.03.2026) inclusa in termen"},{tip:"Execuție org. șantier C11",data:"2026-04-06",durata:120,termen:"2026-08-06",status:"În execuție — prelungire solicitată 31.08.2026"}],sistari:[{dataStart:"2026-01-20",dataStop:"2026-03-02"}],acteAditionale:[{data:"2025-12-24",descriere:"AA1 DGPI3 — suplimentare valoare +378.653 lei",termenNou:null},{data:"2026-03-26",descriere:"AA1 C11 — modalitate plată per asociat (ALA 2%, TNG 98%)",termenNou:null}],
    etape:[
     {id:'e4-1',eveniment:"Invitatie participare si doc. atribuire directa PS1 DIMP 1483/16.10.2025",data:45945,termen:45945,status:"FINALIZAT",obs:"Invitatie participare PT+Executie IH Radulescu",docLink:"https://drive.google.com/file/d/1UtquPMh3WTByv4qmrlKzj9SjydsJ6WTL/view",docNume:"2. Invitatie participare IH Radulescu"},
     {id:'e4-2',eveniment:"Comunicare rezultat atribuire directa PT+Executie 1633/31.10.2025",data:45961,termen:45961,status:"FINALIZAT",obs:"Comunicare atribuire directa catre CIDS",docLink:"https://drive.google.com/file/d/1QLJED2q5i5dS1UntUmYBnixcMwAvgfZK/view",docNume:"5. Comunicare atribuire directa"},
@@ -625,7 +730,7 @@ let proiecte=[
       ]}
    ],
    alerte:[
-    {tip:"warn",text:"Termen contractual DGPI3 (ajustat cu sistarea de 41 zile): 24.06.2026 — mai sunt 12 zile. In termen."},
+    {tip:"warn",text:"TERMEN DEPĂȘIT: C DGPI3/04.11.2025 — termen 24.06.2026 depășit cu 8 zile. Solicitare prelungire până la 31.08.2026 transmisă (CIDS 797/12.06.2026) — actul adițional nu a fost semnat încă."},
     {tip:"warn",text:"Termen executie C11 ALA+TNG (OI 06.04.2026, neafectat de sistarea anterioara): 04.08.2026 — mai sunt 53 zile"},
     {tip:"info",text:"Informare stadiu lucrari transmisa PS1 — 14.05.2026"},
     {tip:"info",text:"Solicitare prelungire termen pana la 31.08.2026 transmisa CIDS 585/20.04.2026 — PS1 a raspuns prin DGPI 797/12.06.2026"},
@@ -942,22 +1047,25 @@ let proiecte=[
     {nume:"22. PMB Adresa completare documente aviz totem 02.06.2026",tip:"Altele",data:"02.06.2026",link:"https://drive.google.com/file/d/1QLsm4dFS72VKVILx9byVyu6Nlje7jXDX/view",obs:"PMB solicita completare documentatie pentru aviz publicitate temporara"},
     {nume:"19. Nr. inregistrare PMB aviz amplasament 15.05.2026",tip:"Altele",data:"15.05.2026",link:"https://drive.google.com/file/d/1i1KVZoOtTOaATZr7JAan17eWT96FKHUa/view",obs:"PMB 81224/15.05.2026"}
    ]},
-    {id:10,titlu:"18.Resistematizare Rutiera Str.Copilului",nrDGPI:"DGPI 2/18.05.2026",nrCIDS:"CIDS 24/18.05.2026",contractLink:"https://drive.google.com/file/d/1pu4LyJl0b4MRpPuUdrI6gqwqAhm6Jwza/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:248000,dataSemnare:46160,termenFinalizare:46212,tip:"Servicii / Studii",status:"În execuție",gbe:"12.400 lei (5%)",gbeRestituire:"14 zile de la semnare PV recepție",observatii:"Termen 45 zile de la notificare. Temă 8.000 lei, CU 8.000 lei, Studii conexe 95.000 lei, Avize 15.000 lei, DALI 122.000 lei.",ordineIncepere:[{tip:"Servicii",data:"2026-05-18",durata:45,termen:"2026-07-02",status:"În execuție"}],sistari:[],acteAditionale:[],
+    {id:10,titlu:"18.Resistematizare Rutiera Str.Copilului",nrDGPI:"DGPI 2/18.05.2026",nrCIDS:"CIDS 24/18.05.2026",contractLink:"https://drive.google.com/file/d/1pu4LyJl0b4MRpPuUdrI6gqwqAhm6Jwza/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:248000,dataSemnare:46160,termenFinalizare:46212,tip:"Servicii / Studii",status:"În execuție",gbe:"12.400 lei (5%)",gbeRestituire:"14 zile de la semnare PV recepție",observatii:"Termen 45 zile de la notificare. Temă 8.000 lei, CU 8.000 lei, Studii conexe 95.000 lei, Avize 15.000 lei, DALI 122.000 lei.",ordineIncepere:[{tip:"Servicii",data:"2026-05-25",durata:45,termen:"2026-07-09",status:"În execuție"}],sistari:[],acteAditionale:[],
    etape:[
     {id:'e10-1',eveniment:"Deschidere cont la Trezorerie",data:46161,termen:46161,status:"FINALIZAT",obs:""},
     {id:'e10-2',eveniment:"Constituire GBE — 12.400 lei",data:46149,termen:46149,status:"FINALIZAT",obs:""},
-    {id:'e10-3',eveniment:"Ordin de începere",data:46164,termen:46209,status:"ÎN TERMEN",obs:"DGPI 595/22.05.2026, CIDS 836/22.05.2026 — 42 zile rămase"},
-    {id:'e10-4',eveniment:"Predare Temă de proiectare (10 zile de la notificare)",data:46164,termen:46175,status:"ÎN TERMEN",obs:"8 zile rămase — 2 exemplare scrise + electronic"},
+    {id:'e10-3',eveniment:"Ordin de începere servicii proiectare DGPI 595/22.05.2026",data:46172,termen:46172,status:"FINALIZAT",obs:"OI emis 22.05.2026, data incepere servicii 25.05.2026. Termen 45 zile → 08.07.2026.",docLink:"https://drive.google.com/file/d/11oPis4fUsix-jTCD8sqEhgeL7os2FL23/view",docNume:"14. DGPI 595/22.05.2026 OI Str. Copilului",obs:"DGPI 595/22.05.2026, CIDS 836/22.05.2026 — 42 zile rămase"},
+    {id:'e10-4',eveniment:"Predare Temă de proiectare (10 zile de la notificare)",data:46181,termen:46181,status:"FINALIZAT",obs:"Tema predata 08.06.2026 — 2 exemplare originale + format electronic PDF+Word pe stick",docLink:"https://drive.google.com/file/d/1trPuncRpEuMUAtGprQrXvKm4NZsYroTm/view",docNume:"23. PV Predare-primire Tema proiectare Str. Copilului"},
     {id:'e10-4b',eveniment:"Predare + Avizare Tema de proiectare PV 86PI077/08.06.2026 si SMIR 10.06.2026",data:46182,termen:46182,status:"FINALIZAT",obs:"Tema de proiectare predata si avizata favorabil de PS1",docLink:"https://drive.google.com/file/d/1trPuncRpEuMUAtGprQrXvKm4NZsYroTm/view",docNume:"PV Predare-primire Tema proiectare DALI Str. Copilului"},
     {id:'e10-5',eveniment:"Depunere documentație pentru CU",data:46164,termen:46164,status:"FINALIZAT",obs:"Dovadă depunere 42180/22.05.2026"},
     {id:'e10-5b',eveniment:"Emitere Certificat de Urbanism nr.787/71/C/42180",data:46190,termen:46190,status:"FINALIZAT",obs:"CU emis 09.06.2026 — conditii pentru lucrari de modernizare/reamenajare Str. Copilului",docLink:"https://drive.google.com/file/d/150DvdTIrWZEufyC4tVwc7OIy7loE9NZU/view",docNume:"24. CU Strada Copilului"},
-    {id:'e10-6',eveniment:"Expertiză tehnică (25 zile)",data:46164,termen:46189,status:"ÎN TERMEN",obs:"Raport în 4 exemplare + electronic"},
+    {id:'e10-6',eveniment:"Expertiză tehnică — livrabil DALI",data:null,termen:46212,status:"ÎN TERMEN",obs:"Inclusa in DALI — termen 09.07.2026"},
     {id:'e10-7',eveniment:"Studiu topografic (25 zile) — finalizat",data:46189,termen:46189,status:"FINALIZAT",obs:"Ridicare topografica realizata de ALFA GON SRL — predata 01.06.2026",docLink:"https://drive.google.com/file/d/1cSyepZv8YmlXayGpLN8RX8vfI_rYA7fB/view",docNume:"20. Alfa Gon ridicare topografica Str. Copilului"},
-    {id:'e10-8',eveniment:"Studiu geotehnic (25 zile)",data:46164,termen:46189,status:"ÎN TERMEN",obs:""},
+    {id:'e10-8',eveniment:"Studiu geotehnic — livrabil DALI",data:null,termen:46212,status:"ÎN TERMEN",obs:"Inclus in DALI — termen 09.07.2026"},
     {id:'e10-8b',eveniment:"Convocare sedinta CTE — verificare Tema de proiectare 10.06.2026",data:46190,termen:46190,status:"FINALIZAT",obs:"Comisie verificare/analizare/evaluare documentatii tehnico-economice — sedinta 10.06.2026 ora 10:30",docLink:"https://drive.google.com/file/d/1P6EaSHNM-u8TW_vVZ_3Ao8DSxNPGJwsA/view",docNume:"22. PS1 Convocare sedinta CTE"},
-    {id:'e10-9',eveniment:"Documentații avize/acorduri CU (45 zile)",data:46164,termen:46209,status:"ÎN TERMEN",obs:"Avize necesare (PS1 790/10.06.2026): Apa Nova, e-distributie, Distrigaz, Orange, CMTEB, CMIPB, Netcity Telecom, Comisia Tehnica circulatii-PMB, Brigada Politie Rutiera, Agentia protectia mediului. Solicitare scutire taxe avizare (DGPI 695/11.06.2026, OUG 31/2025 art.VI). DISTRIGAZ AVIZ FAVORABIL obtinut 29.06.2026.",docLink:"https://drive.google.com/file/d/1XW_Jt7yglb4OYt9p1W4b1I5GJ5qPiyj8/view",docNume:"27. Avize necesare Strada Copilului"},
+    {id:'e10-8b',eveniment:"Predare Tema de proiectare CIDS 86P1077/08.06.2026",data:46181,termen:46181,status:"FINALIZAT",obs:"Tema de proiectare predata PS1 in 2 exemplare originale + format electronic (PDF+Word pe stick)",docLink:"https://drive.google.com/file/d/1trPuncRpEuMUAtGprQrXvKm4NZsYroTm/view",docNume:"23. DGPI PV Predare-primire Tema proiectare Str. Copilului"},
+    {id:'e10-8c',eveniment:"PS1 PV avizare Tema de proiectare Str. Copilului",data:46181,termen:46181,status:"FINALIZAT",obs:"PS1 a avizat tema de proiectare",docLink:"https://drive.google.com/file/d/1Rb8hstnY0RDLU0C7GyVOWi33KqcN2FJ4/view",docNume:"25. PS1 PV avizare Str. Copilului"},
+    {id:'e10-8d',eveniment:"PS1 Aviz Tema de proiectare Str. Copilului",data:46181,termen:46181,status:"FINALIZAT",obs:"Aviz PS1 favorabil pentru tema de proiectare",docLink:"https://drive.google.com/file/d/139K9XZ2fRNMdq3ZKwXS4XEC4LuOxu0_x/view",docNume:"26. PS1 Aviz Str. Copilului"},
+    {id:'e10-9',eveniment:"Documentații avize/acorduri CU (45 zile) — termen contract 08.07.2026",data:46164,termen:46212,status:"ÎN TERMEN",obs:"Termen general contract: 09.07.2026 (OI 25.05.2026 + 45 zile). Avize necesare conform CU: Apa Nova, e-distributie, Distrigaz (AVIZ FAVORABIL 29.06.2026), Orange, CMTEB, CMIPB, Netcity Telecom, Comisia Tehnica circulatii-PMB, Brigada Politie Rutiera, Agentia protectia mediului. Avizele se pot depune si dupa termenul contractului — important: DALI complet cu avizele disponibile. Scutire taxe avizare solicitata DGPI 695/11.06.2026.",docLink:"https://drive.google.com/file/d/1XW_Jt7yglb4OYt9p1W4b1I5GJ5qPiyj8/view",docNume:"27. Avize necesare Strada Copilului"},
     {id:'e10-9b',eveniment:"Aviz favorabil Distrigaz Sud Str. Copilului 29.06.2026",data:46207,termen:46207,status:"FINALIZAT",obs:"Primul aviz obtinut — Distrigaz Sud aviz favorabil pentru Resistematizare Rutiera Str. Copilului",docLink:"https://drive.google.com/file/d/1E3M-jNCuqeZr-TV1JJKcbEBeS-dBNo44/view",docNume:"32. Aviz favorabil Distrigaz Str. Copilului"},
-    {id:'e10-10',eveniment:"DALI și studii conexe (45 zile)",data:46164,termen:46209,status:"ÎN TERMEN",obs:"42 zile rămase — 4 exemplare + electronic"}
+    {id:'e10-10',eveniment:"DALI și studii conexe (45 zile)",data:null,termen:46212,status:"ÎN TERMEN",obs:"Termen: 09.07.2026 (OI 25.05.2026 + 45 zile). 4 exemplare + electronic."}
    ],
    subcontractanti:[
     {id:'s10-1',firma:"ALFA GON SRL",obiect:"Servicii topo-cadastrale — ridicare topografica Str. Copilului",contract:"Ctr. 27/27.05.2026",valoare:"",dataSemnare:46167,termen:46187,status:"FINALIZAT",gbe:"",penalitati:"",link:"https://drive.google.com/file/d/1_B1pzRn5SjGkwn3c1goRKtRYZFckHCe0/view",obs:"Cumparare directa DA40480970 — servicii topografie inginereasca, durata max. 20 zile. Ridicare topografica predata 01.06.2026.",
@@ -1063,7 +1171,7 @@ let proiecte=[
     {nume:"17. DUPS Convocare comisie receptie Dorobanti 04.06.2026",tip:"Altele",data:"04.06.2026",link:"https://drive.google.com/file/d/1VGiVbGnipyBTRd6-0b5g7wqkyR4gqbNG/view",obs:"Convocare 08.06.2026 ora 09:00"},
     {nume:"Deviz Dorobanti",tip:"Altele",data:"",link:"https://drive.google.com/file/d/1HoIEJCvAY-Tz20TG1xu-DZ5KgijCTNyP/view",obs:"Deviz lucrari modernizare instalatie electrica"}
    ]},
-    {id:12,titlu:"22. Piateta Iosif Sava",nrDGPI:"DGPI 4/25.06.2026",nrCIDS:"CIDS 37/25.06.2026",contractLink:"https://drive.google.com/file/d/16_y536VA7b2QvWDwQcuYrnIFQevEWwMA/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:253000,dataSemnare:46204,termenFinalizare:46563,tip:"Servicii / Studii",status:"În execuție",gbe:"12.650 lei (5%) — virament Trezorerie",gbeRestituire:"Conform art.154² Legea 98/2016",observatii:"Servicii tema proiectare, expertiza tehnica, DALI si documentatii tehnice conexe — Piateta Iosif Sava. Contract DGPI 4/CIDS 37 semnat 25.06.2026. 253.000 lei fara TVA. OI emis 29.06.2026. Termene: Tema 30 zile, Expertiza 40 zile, DALI 90 zile → 27.09.2026.",ordineIncepere:[{tip:"Servicii",data:"2026-06-29",durata:90,termen:"2026-09-27",status:"În execuție"}],sistari:[],acteAditionale:[],
+    {id:12,titlu:"22. Piateta Iosif Sava",nrDGPI:"DGPI 4/25.06.2026",nrCIDS:"CIDS 37/25.06.2026",contractLink:"https://drive.google.com/file/d/16_y536VA7b2QvWDwQcuYrnIFQevEWwMA/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:253000,dataSemnare:46204,termenFinalizare:46292,tip:"Servicii / Studii",status:"În execuție",gbe:"12.650 lei (5%) — virament Trezorerie",gbeRestituire:"Conform art.154² Legea 98/2016",observatii:"Servicii tema proiectare, expertiza tehnica, DALI si documentatii tehnice conexe — Piateta Iosif Sava. Contract DGPI 4/CIDS 37 semnat 25.06.2026. 253.000 lei fara TVA. OI emis 29.06.2026. Termene: Tema 30 zile, Expertiza 40 zile, DALI 90 zile → 27.09.2026.",ordineIncepere:[{tip:"Servicii",data:"2026-06-29",durata:90,termen:"2026-09-27",status:"În execuție"}],sistari:[],acteAditionale:[],
    etape:[
     {id:'e12-1',eveniment:"Solicitare declaratie conformitate DGPI 431/16.04.2026",data:46117,termen:46117,status:"FINALIZAT",obs:"Solicitare declaratie art.31 Legea 98/2016",docLink:"https://drive.google.com/file/d/1aW57oAoMbeLKZTLQzq5wf9USeAJWvHmb/view",docNume:"Solicitare declaratie Iosif Sava"},
     {id:'e12-2',eveniment:"Declaratie conformitate CIDS 571/16.04.2026",data:46117,termen:46117,status:"FINALIZAT",obs:"Declaratie conformitate DG",docLink:"https://drive.google.com/file/d/1qpJ_CCtXVkfVfMcXdcMq1QRiyuNlE6xx/view",docNume:"Declaratie Iosif Sava"},
@@ -1124,7 +1232,7 @@ let proiecte=[
     {nume:"Oferta financiara CIDS 798/18.05.2026",tip:"Ofertă",data:"18.05.2026",link:"https://drive.google.com/file/d/11N3m_2Ozhie_5xFnNsWtbcsZ9ofRnkCZ/view",obs:"9.000 lei fara TVA"},
     {nume:"PS1 DGCPP 882/20.05.2026 Confirmare prestari",tip:"Altele",data:"20.05.2026",link:"https://drive.google.com/file/d/1eVo6MteGW2ovw9k4tbUJUa7_GeyXPTUM/view",obs:"Confirmare demarare servicii"}
    ]},
-    {id:15,titlu:"32.PIATA AMZEI 13 A reparatii",nrDGPI:"DUPS 135/10.06.2026",nrCIDS:"CIDS 33/17.06.2026",contractLink:"https://drive.google.com/file/d/1AdLSiYV9c-MNV-5PnbXlzRMnHoysD9CX/view",beneficiar:"DIRECȚIA DE UTILITĂȚI PUBLICE, SALUBRIZARE ȘI PROTECȚIA MEDIULUI SECTOR 1",valoare:668201.62,dataSemnare:46195,termenFinalizare:46396,tip:"Execuție",status:"În execuție",gbe:"66.820,16 lei (10%) — virament Trezorerie",gbeRestituire:"70% la PV receptie terminare lucrari (14 zile), 30% la receptie finala (dupa 12 luni garantie)",observatii:"Lucrari reparatii imobil Piata Amzei 13A. Contract DUPS 135/CIDS 33 semnat 10.06.2026. 668.201,62 lei fara TVA (808.523,96 lei cu TVA). Durata executie: 30 zile de la OI. OI DUPS 14041/22.06.2026. Subcontractant: RE-VISSION Ctr.36/24.06.2026. Garantie lucrari: 12 luni. Valabilitate contract: 31.12.2026.",ordineIncepere:[{tip:"Execuție",data:"2026-06-22",durata:30,termen:"2026-07-22",status:"În execuție"}],sistari:[],acteAditionale:[],
+    {id:15,titlu:"32.PIATA AMZEI 13 A reparatii",nrDGPI:"DUPS 135/10.06.2026",nrCIDS:"CIDS 33/17.06.2026",contractLink:"https://drive.google.com/file/d/1AdLSiYV9c-MNV-5PnbXlzRMnHoysD9CX/view",beneficiar:"DIRECȚIA DE UTILITĂȚI PUBLICE, SALUBRIZARE ȘI PROTECȚIA MEDIULUI SECTOR 1",valoare:668201.62,dataSemnare:46195,termenFinalizare:46225,tip:"Execuție",status:"În execuție",gbe:"66.820,16 lei (10%) — virament Trezorerie",gbeRestituire:"70% la PV receptie terminare lucrari (14 zile), 30% la receptie finala (dupa 36 luni garantie)",observatii:"Lucrari reparatii imobil Piata Amzei 13A. Contract DUPS 135/CIDS 33 semnat 10.06.2026. 668.201,62 lei fara TVA (808.523,96 lei cu TVA). Durata executie: 30 zile de la OI. OI DUPS 14041/22.06.2026. Subcontractant: RE-VISSION Ctr.36/24.06.2026. Garantie lucrari: 12 luni. Valabilitate contract: 31.12.2026.",ordineIncepere:[{tip:"Execuție",data:"2026-06-22",durata:30,termen:"2026-07-22",status:"În execuție"}],sistari:[],acteAditionale:[],
    etape:[
     {id:'e15-1',eveniment:"DUPS Solicitare oferta Piata Amzei 13A 11440/22.05.2026",data:46173,termen:46173,status:"FINALIZAT",obs:"Solicitare oferta lucrari reparatii",docLink:"https://drive.google.com/file/d/1CpW6WhCMikNsN2IqBVIzbTpylzRHsNfQ/view",docNume:"1. DUPS Solicitare oferta Piata Amzei 13A"},
     {id:'e15-2',eveniment:"Oferta de pret revizuita Amzei 13A CIDS 841/25.05.2026",data:46176,termen:46176,status:"FINALIZAT",obs:"668.201,62 lei fara TVA",docLink:"https://drive.google.com/file/d/1lzQqgbW2sqhTHnlr1wdBRE5s0qx4DWvA/view",docNume:"3. Oferta revizuita Amzei 13A"},
@@ -1135,17 +1243,17 @@ let proiecte=[
     {id:'e15-7',eveniment:"Adresa PMB ref. Amzei 13A 1026/18.06.2026",data:46196,termen:46196,status:"FINALIZAT",obs:"Adresa PMB referitoare la imobilul Piata Amzei 13A",docLink:"https://drive.google.com/file/d/1Cav096vVckpM1M0q3YiaRffQbvnIaajx/view",docNume:"10. Adresa PMB Amzei 13A"},
     {id:'e15-8',eveniment:"DUPS 14041/22.06.2026 Ordin incepere lucrari Amzei 13A",data:46200,termen:46200,status:"FINALIZAT",obs:"Ordin de incepere lucrari emis de DUPS",docLink:"https://drive.google.com/file/d/1KpHfClEy5y4Q2L7eea3L_VLyVYLr57pf/view",docNume:"12. DUPS OI lucrari Amzei 13A"},
     {id:'e15-9',eveniment:"Contract RE-VISSION Ctr.36/24.06.2026 — executie lucrari Amzei 13A",data:46201,termen:46201,status:"FINALIZAT",obs:"Contract subcontractant executie lucrari",docLink:"https://drive.google.com/file/d/1eFHpk_pYORcLx3DGEAk9fvwiJJZX7Zd3/view",docNume:"13. RE-VISSION Contract 36/24.06.2026"},
-    {id:'e15-10',eveniment:"Plan de lucru predat la DUPS (5 zile de la OI)",data:null,termen:46229,status:"ÎN TERMEN",obs:"Termen: 5 zile de la OI 22.06.2026 = 27.06.2026 — plan de lucru cu grafic, experti cheie, 5 intalniri obligatorii"},
-    {id:'e15-11',eveniment:"Executie lucrari — acoperis (hidroizolatie ~1480 mp + rigole + granit ~90 mp)",data:null,termen:46234,status:"ÎN TERMEN",obs:"Lucrari acoperis: hidroizolatie terasa, 8 rigole scurgere, reparatii granit 90 mp, copertina tabla zincata parter"},
+    {id:'e15-10b',eveniment:"Grafic general de realizare a investitiei predat la DUPS — la semnarea contractului (art.9.3)",data:46195,termen:46195,status:"FINALIZAT",obs:"Obligatie conform art.9.3 din contract — grafic predat la semnare (17.06.2026). Anexa 8 la contract. Cap.13 din contract precizeaza ca graficul detaliat NU este cazul."},
+    {id:'e15-11',eveniment:"Executie lucrari — acoperis (hidroizolatie ~1480 mp + rigole + granit ~90 mp)",data:null,termen:46234,status:"ÎN TERMEN",obs:"Lucrari acoperis: hidroizolatie terasa, 8 rigole scurgere, reparatii granit 90 mp, copertina tabla zincata parter. Termen: 30 zile de la OI 22.06.2026 = 22.07.2026"},
     {id:'e15-12',eveniment:"Executie lucrari — subsol (infiltratii + instalatii evacuare ape + hidrant)",data:null,termen:46234,status:"ÎN TERMEN",obs:"Subsol 1: remediere infiltratii, hidroizolatie, sapa, granit. Subsol 2: sistem automatizat pompe evacuare. Hidrant: verificare si PIF"},
     {id:'e15-13',eveniment:"Probe etanseitate + remediere defecte",data:null,termen:46234,status:"ÎN TERMEN",obs:"Probe inundare dupa finalizare hidroizolatie. Remediere defecte in max 5 zile de la constatare"},
     {id:'e15-14',eveniment:"Notificare DUPS finalizare lucrari + convocare comisie receptie",data:null,termen:46234,status:"ÎN TERMEN",obs:"Termen final executie: 30 zile de la OI 22.06.2026 = 22.07.2026. CIDS notifica DUPS si solicita convocarea comisiei de receptie"},
     {id:'e15-15',eveniment:"PV Receptie la terminarea lucrarilor",data:null,termen:46234,status:"ÎN TERMEN",obs:"Comisie receptie DUPS. Dupa receptie: 70% din GBE (46.774 lei) se restituie in 14 zile"},
     {id:'e15-16',eveniment:"Factura finala + situatie de lucrari",data:null,termen:null,status:"ÎN TERMEN",obs:"Plata in 30 zile de la inregistrare factura in RO e-Factura. Garantie lucrari: 12 luni de la PV receptie terminare"},
-    {id:'e15-17',eveniment:"Receptie finala (dupa 12 luni garantie)",data:null,termen:null,status:"ÎN TERMEN",obs:"Dupa expirarea perioadei de garantie de 12 luni. Restituire 30% GBE ramasa (20.046 lei)"}
+    {id:'e15-17',eveniment:"Receptie finala (dupa 12 luni garantie)",data:null,termen:null,status:"ÎN TERMEN",obs:"Dupa expirarea perioadei de garantie de 36 luni (art.10.3). Restituire 30% GBE ramasa (20.046 lei)"}
    ],
    subcontractanti:[
-    {id:'s15-1',firma:"RE-VISSION CONCEPT S.R.L.",obiect:"Executie lucrari reparatii imobil Piata Amzei 13A (acoperis, terasa, statii pompe, copertina)",contract:"Ctr. 36/24.06.2026",valoare:"640.000 lei fara TVA",dataSemnare:46201,termen:46234,status:"ÎN TERMEN",gbe:"64.000 lei (10%)",penalitati:"0,03%/zi intarziere",link:"https://drive.google.com/file/d/1eFHpk_pYORcLx3DGEAk9fvwiJJZX7Zd3/view",obs:"Contract executie lucrari semnat 24.06.2026. 640.000 lei fara TVA. Durata: 30 zile de la OI. Valabilitate: 31.08.2026. Garantie lucrari: 36 luni. GBE: 64.000 lei (10%).",
+    {id:'s15-1',firma:"RE-VISSION CONCEPT S.R.L.",obiect:"Executie lucrari reparatii imobil Piata Amzei 13A (acoperis, terasa, statii pompe, copertina)",contract:"Ctr. 36/24.06.2026",valoare:"640.000 lei fara TVA",dataSemnare:46201,termen:46234,status:"ÎN TERMEN",gbe:"64.000 lei (10%)",penalitati:"0,03%/zi intarziere",link:"https://drive.google.com/file/d/1eFHpk_pYORcLx3DGEAk9fvwiJJZX7Zd3/view",obs:"Contract executie lucrari semnat 24.06.2026. 640.000 lei fara TVA. Durata: 30 zile de la OI. Valabilitate: 31.08.2026. Garantie lucrari: 36 luni (art.10.3 contract DUPS si art.10.3 contract RE-VISSION). GBE: 64.000 lei (10%).",
       etape:[
         {id:'es15-1-1',eveniment:"Semnare contract RE-VISSION Ctr.36/24.06.2026",data:46201,termen:46201,status:"FINALIZAT",obs:"Executie lucrari reparatii Piata Amzei 13A",docLink:"https://drive.google.com/file/d/1eFHpk_pYORcLx3DGEAk9fvwiJJZX7Zd3/view",docNume:"13. RE-VISSION Contract 36/24.06.2026"}
       ],
@@ -1166,7 +1274,7 @@ let proiecte=[
     {nume:"12. DUPS 14041/22.06.2026 OI Lucrari Amzei 13A",tip:"Ordin",data:"22.06.2026",link:"https://drive.google.com/file/d/1KpHfClEy5y4Q2L7eea3L_VLyVYLr57pf/view",obs:"Ordin de incepere lucrari emis de DUPS"},
     {nume:"13. RE-VISSION Contract 36/24.06.2026 Amzei 13A",tip:"Contract",data:"24.06.2026",link:"https://drive.google.com/file/d/1eFHpk_pYORcLx3DGEAk9fvwiJJZX7Zd3/view",obs:"Contract subcontractant executie lucrari reparatii"}
    ]},
-    {id:16,titlu:"24. Reconfigurare cladiri bir. Odai",nrDGPI:"DGPI 3/20.05.2026",nrCIDS:"CIDS 25/20.05.2026",contractLink:"https://drive.google.com/file/d/1vsta5TqHPNhdGxR-uFtE9u1y_Mkh4pDt/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:1397500,dataSemnare:46162,termenFinalizare:46243,tip:"Proiectare + Execuție",status:"În execuție",gbe:"69.875 lei (5%) — virament Trezorerie",gbeRestituire:"14 zile de la recepția la terminarea lucrărilor",observatii:"Contract DGPI 3/20.05.2026 — CIDS 25/20.05.2026. Valoare: 1.397.500 lei fără TVA. Proiectare 20 zile (OI 25.05.2026 → termen 15.06.2026) + Execuție 45 zile de la OI execuție + Dotări 10 zile după recepție. Total: 75 zile. GBE: 5% = 69.875 lei. Garanție: 24 luni. Penalități: 0,1%/zi. Plată: 30 zile de la factură RO e-Factura. CPV: 45200000-9.",ordineIncepere:[{tip:"Proiectare",data:"2026-05-26",durata:20,termen:"2026-06-15",status:"Finalizat"},{tip:"Execuție",data:"2026-06-17",durata:45,termen:"2026-08-01",status:"În execuție"},{tip:"Dotări",data:null,durata:10,termen:null,status:"Neemis — după recepția la terminarea lucrărilor"}],sistari:[],acteAditionale:[],
+    {id:16,titlu:"24. Reconfigurare cladiri bir. Odai",nrDGPI:"DGPI 3/20.05.2026",nrCIDS:"CIDS 25/20.05.2026",contractLink:"https://drive.google.com/file/d/1vsta5TqHPNhdGxR-uFtE9u1y_Mkh4pDt/view",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:1397500,dataSemnare:46162,termenFinalizare:46235,tip:"Proiectare + Execuție",status:"În execuție",gbe:"69.875 lei (5%) — virament Trezorerie",gbeRestituire:"14 zile de la recepția la terminarea lucrărilor",observatii:"Contract DGPI 3/20.05.2026 — CIDS 25/20.05.2026. Valoare: 1.397.500 lei fără TVA. Proiectare 20 zile (OI 25.05.2026 → termen 15.06.2026) + Execuție 45 zile de la OI execuție + Dotări 10 zile după recepție. Total: 75 zile. GBE: 5% = 69.875 lei. Garanție: 24 luni. Penalități: 0,1%/zi. Plată: 30 zile de la factură RO e-Factura. CPV: 45200000-9.",ordineIncepere:[{tip:"Proiectare",data:"2026-05-26",durata:20,termen:"2026-06-15",status:"Finalizat"},{tip:"Execuție",data:"2026-06-17",durata:45,termen:"2026-08-01",status:"În execuție"},{tip:"Dotări",data:null,durata:10,termen:null,status:"Neemis — după recepția la terminarea lucrărilor"}],sistari:[],acteAditionale:[],
    etape:[
     {id:'e16-1',eveniment:"PS1 DGPI 456/24.04.2026 Invitatie participare Reconfigurare birouri Odai",data:46144,termen:46144,status:"FINALIZAT",obs:"Invitație participare",docLink:"https://drive.google.com/file/d/1Bo9O0nfRe8azC509BQLw5a8h3CaG7GQv/view",docNume:"1. PS1 DGPI 456/24.04.2026 Inv.Part. Reconf. cladiri bir. Odai"},
     {id:'e16-2',eveniment:"Declaratie conformitate DG",data:46144,termen:46144,status:"FINALIZAT",obs:"Declarație conformitate Director General",docLink:"https://drive.google.com/file/d/1ddjVXWXzdp4vn4ahOlwWwdCfObxex37u/view",docNume:"2. Declaratie DG Reconfigurare birouri Odai"},
@@ -1174,8 +1282,10 @@ let proiecte=[
     {id:'e16-4',eveniment:"Depunere oferta C13 Odai 757/12.05.2026",data:46153,termen:46153,status:"FINALIZAT",obs:"Ofertă C13 Odai depusă — propunere tehnică + financiară",docLink:"https://drive.google.com/file/d/1dvM5IRnjVYGutJx7DZw2y-Pawz60gPdn/view",docNume:"5. Oferta C13 Odai"},
     {id:'e16-5',eveniment:"Contract DGPI 3/20.05.2026",data:46162,termen:46162,status:"FINALIZAT",obs:"Contract semnat — Proiectare + execuție + dotări clădire C13 Odăi",docLink:"https://drive.google.com/file/d/1vsta5TqHPNhdGxR-uFtE9u1y_Mkh4pDt/view",docNume:"Contract DGPI 3/20.05.2026 C13 Odai"},
     {id:'e16-6',eveniment:"Dovada depunere GBE C13 Odai",data:46167,termen:46167,status:"FINALIZAT",obs:"GBE constituită la Trezorerie",docLink:"https://drive.google.com/file/d/1tHrSSFyXtYmulBpdJz3hL5P6oJHFATtB/view",docNume:"Dovada depunere GBE C13 Odai"},
-    {id:'e16-7',eveniment:"OI proiectare DGPI 599/25.05.2026 — termen 20 zile",data:46167,termen:46188,status:"ÎN TERMEN",obs:"Data începere: 26.05.2026. Termen predare documentație: 15.06.2026",docLink:"https://drive.google.com/file/d/14rh6XyepLfhu3zP_A9BVoR4mlZiFo22u/view",docNume:"OI proiectare DGPI 599/25.05.2026 C13 Odai"},
+    {id:'e16-7',eveniment:"OI proiectare DGPI 599/25.05.2026 — termen 20 zile",data:46167,termen:46188,status:"FINALIZAT",obs:"Proiectare finalizata si predata catre PS1 pe 09.06.2026 (SGPI 684) — inainte de termen (15.06.2026)",docLink:"https://drive.google.com/file/d/14rh6XyepLfhu3zP_A9BVoR4mlZiFo22u/view",docNume:"OI proiectare DGPI 599/25.05.2026 C13 Odai"},
     {id:'e16-8',eveniment:"Predare documentație tehnico-economică — PV CIDS 966/09.06.2026 (SGPI 684/09.06.2026)",data:46182,termen:46188,status:"FINALIZAT",obs:"Documentatie predata: memoriu tehnic, piese desenate arhitectura+instalatii, deviz general, liste cantitati",docLink:"https://drive.google.com/file/d/1KIo8dBPmbHRUut1nfFxbOpdVbolkPQyP/view",docNume:"PV predare-primire documentatie proiectare C13 Odai"},
+    {id:'e16-8a',eveniment:"PV Predare-primire documentatie tehnica OCEAN 2000 catre CIDS — 08.06.2026",data:46181,termen:46181,status:"FINALIZAT",obs:"OCEAN 2000 preda documentatia de proiectare catre CIDS: memoriu tehnic, piese desenate arhitectura+instalatii, deviz general, devize pe obiect, liste cantitati — 3 exemplare originale + electronic PDF pe stick",docLink:"https://drive.google.com/file/d/1uAKO6hKmWsScYufx-jIRuIBk0r_TLPwW/view",docNume:"6. OCEAN 2000 PV Predare-primire documentatie Odai C13"},
+    {id:'e16-8b2',eveniment:"PV Predare-primire documentatie tehnica CIDS catre PS1 SGPI 684/09.06.2026",data:46182,termen:46182,status:"FINALIZAT",obs:"CIDS preda documentatia catre PS1 — 3 exemplare originale + electronic. Nr CIDS 966/09.06.2026",docLink:"https://drive.google.com/file/d/1KIo8dBPmbHRUut1nfFxbOpdVbolkPQyP/view",docNume:"9. CIDS PV predare-primire documentatie C13 Odai"},
     {id:'e16-8b',eveniment:"CIDS 967/09.06.2026 — Finalizare proiectare, solicitare intrunire comisie receptie",data:46183,termen:46183,status:"FINALIZAT",obs:"CIDS notifica PS1 ca documentatia de proiectare e finalizata si solicita receptia",docLink:"https://drive.google.com/file/d/1MzBn_UjtQVYoAP8DOs3uq_jMWlczCZNQ/view",docNume:"CIDS 967/09.06.2026 — Adresa finalizare proiectare"},
     {id:'e16-8c',eveniment:"DGPI 729/17.06.2026 — Ordin Incepere Lucrari Executie C13 Sos. Odai",data:46195,termen:46195,status:"FINALIZAT",obs:"Ordin de incepere a lucrarilor de executie C13 Sos. Odai — dupa receptia documentatiei de proiectare",docLink:"https://drive.google.com/file/d/1nbt7VcqMG7-i6HTuVhmYdGXaWQ4CA0Rr/view",docNume:"10. DGPI 729/17.06.2026 OI Lucrari C13 Odai"},
     {id:'e16-8d',eveniment:"Contract IO CONSTRUCT Ctr.34/24.06.2026 — executie lucrari C13 Odai",data:46201,termen:46201,status:"FINALIZAT",obs:"Contract executie lucrari reconfigurare birouri C13 Sos. Odai cu IO CONSTRUCT",docLink:"https://drive.google.com/file/d/1-FHwjjP3LE-DW5u4lTOm4py3mSeFpXjw/view",docNume:"11. IO Construct Contract 34/24.06.2026 Odai C13"},
@@ -1305,7 +1415,7 @@ let proiecte=[
    ]},
     {id:21,titlu:"Strada Biharia",nrDGPI:"—",nrCIDS:"—",contractLink:"",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:0,dataSemnare:null,termenFinalizare:null,tip:"Execuție",status:"Semnare",gbe:"—",gbeRestituire:"—",observatii:"Contract nesemnat. In pregatire.",
    etape:[
-    {id:'e21-1',eveniment:"Pregatire documentatie + semnare contract",data:null,termen:null,status:"ÎN TERMEN",obs:"In pregatire — asteptare semnare contract"}
+    {id:'e21-1',eveniment:"Pregatire documentatie + semnare contract",data:null,termen:null,status:"Semnare",obs:"In pregatire — asteptare semnare contract"}
    ],
    subcontractanti:[],
    alerte:[{tip:"info",text:"Contract in pregatire — Strada Biharia"}],
@@ -1316,7 +1426,7 @@ let proiecte=[
    etape:[
     {id:'e22-1',eveniment:"PS1 Solicitare oferta igienizare birouri registratura",data:46181,termen:46181,status:"FINALIZAT",obs:"Solicitare Serviciul Administrativ PS1 — 09.06.2026",docLink:"https://drive.google.com/file/d/1mmBE1soOSjRocXE5JqHDijK_jPVZ0UTH/view",docNume:"Solicitare oferta igienizare bir. registratura PS1"},
     {id:'e22-2',eveniment:"Transmitere oferta CIDS 965/09.06.2026 — 8.820 lei fara TVA",data:46181,termen:46181,status:"FINALIZAT",obs:"Oferta transmisa catre PS1 — valabilitate 30 zile de la emitere",docLink:"https://drive.google.com/file/d/1D6-bRYFbvbmzCo9OsYlL3bpxakCq5Dzg/view",docNume:"Oferta de pret servicii igienizare bir. registratura"},
-    {id:'e22-3',eveniment:"Asteptare acceptare oferta / atribuire contract",data:null,termen:46211,status:"ÎN TERMEN",obs:"In asteptarea raspunsului PS1 — oferta valabila 30 zile de la 09.06.2026 (pana la 09.07.2026)"}
+    {id:'e22-3',eveniment:"Asteptare acceptare oferta / atribuire contract",data:null,termen:46211,status:"ÎN TERMEN",obs:"In asteptarea raspunsului PS1 — oferta valabila 30 zile de la 09.06.2026 (pana la 08.07.2026)"}
    ],
    subcontractanti:[],
    alerte:[{tip:"info",text:"Oferta transmisa 09.06.2026 — in asteptare acceptare PS1"}],
@@ -1358,6 +1468,124 @@ function updateStats(){
   document.getElementById('cnt-semn').textContent=proiecte.filter(p=>p.status==='Semnare').length;
   document.getElementById('cnt-susp').textContent=proiecte.filter(p=>p.status==='Suspendat').length;
   document.getElementById('cnt-fin').textContent=proiecte.filter(p=>['Finalizat','Predat','Închis'].includes(p.status)).length;
+  // Valoare totala contracte active
+  const active=proiecte.filter(p=>!['Finalizat','Predat','Închis'].includes(p.status));
+  const total=active.reduce((s,p)=>s+(p.valoare||0),0);
+  const el=document.getElementById('cnt-valoare');
+  if(el)el.textContent=total>0?fmtMoney(total):'—';
+  // Banner urgent (termene < 7 zile)
+  renderUrgentBanner();
+  // Filtre beneficiar
+  renderBeneficiarFilter();
+}
+
+function renderUrgentBanner(){
+  const container=document.getElementById('urgent-banner-container');
+  if(!container)return;
+
+  const urgente=[];
+
+  proiecte.filter(p=>p.status==='În execuție').forEach(p=>{
+    const titlu=p.titlu.replace(/^\d+[-.\s]+/,'').trim();
+
+    // Ia termenul general al proiectului (din OI activ sau termenFinalizare)
+    const te=calcTermenEfectiv(p)||p.termenFinalizare;
+    if(!te) return;
+    const z=zilesRamase(te);
+    if(z===null) return;
+    // Arata: depasit (oricand) SAU in urmatoarele 14 zile
+    if(z>14) return;
+
+    // Gaseste prima etapa activa cu termen — asta e ce trebuie facut
+    const etapeActive=(p.etape||[]).filter(e=>
+      e.status!=='FINALIZAT' && e.termen &&
+      !e.eveniment.toLowerCase().includes('receptie finala') &&
+      !e.eveniment.toLowerCase().includes('garantie')
+    );
+
+    // Mesaj clar: ce trebuie predat/finalizat
+    let actiune='Finalizare și predare contract';
+    if(etapeActive.length>0){
+      actiune=etapeActive[0].eveniment
+        .replace(/\(.*?\)/g,'')
+        .replace(/—.*/,'')
+        .replace(/termen\s*\d+.*$/i,'')
+        .replace(/\s+/g,' ')
+        .trim();
+      if(actiune.length>65) actiune=actiune.substring(0,65)+'…';
+    }
+
+    urgente.push({pid:p.id, titlu, actiune, zile:z, depasit:z<0});
+  });
+
+  if(!urgente.length){container.innerHTML='';return;}
+  urgente.sort((a,b)=>a.zile-b.zile);
+
+  const areDepasit=urgente.some(u=>u.depasit||u.zile<=3);
+  const culoare=areDepasit?'var(--red)':'var(--yellow)';
+  const culoareBg=areDepasit?'var(--red-light)':'var(--yellow-light)';
+
+  container.innerHTML=`<div class="urgent-banner" style="background:${culoareBg};border-color:${culoare}">
+    <div style="font-size:1.3rem">${areDepasit?'🚨':'⏰'}</div>
+    <div style="flex:1">
+      <div class="urgent-banner-title" style="color:${culoare}">TERMENE URGENTE — proiecte în execuție</div>
+      ${urgente.map(u=>{
+        const icon=u.depasit?'❌':u.zile===0?'🔴 AZI':u.zile<=3?'🔴':'🟡';
+        const timp=u.depasit
+          ?`<strong style="color:var(--red)">DEPĂȘIT cu ${Math.abs(u.zile)} zile</strong>`
+          :u.zile===0?`<strong>AZI</strong>`
+          :`<strong>${u.zile} ${u.zile===1?'zi':'zile'}</strong>`;
+        return `<div class="urgent-item" onclick="showDetail(${u.pid})" style="cursor:pointer;padding:5px 0;border-bottom:1px solid ${culoare}25;display:flex;gap:8px;align-items:baseline">
+          <span>${icon}</span>
+          <span>${timp}</span>
+          <span style="font-weight:700;color:var(--ink)">${u.titlu}</span>
+          <span style="color:var(--ink2);font-size:.78rem">→ ${u.actiune}</span>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+let currentBeneficiar=null;
+function renderBeneficiarFilter(){
+  const container=document.getElementById('benef-filter');
+  if(!container)return;
+  const shortNames=b=>{
+    if(b.includes('UTILIT'))return 'DUPS';
+    if(b.includes('PATRIMONIU'))return 'DGPI';
+    if(b.includes('SECTOR')||b.includes('PRIMĂRIA')||b.includes('PRIMARIA'))return 'PS1';
+    return b.substring(0,15);
+  };
+  // Grupeaza beneficiarii cu acelasi shortName
+  const grupuri={};
+  proiecte.forEach(p=>{
+    const short=shortNames(p.beneficiar);
+    if(!grupuri[short]) grupuri[short]=[];
+    if(!grupuri[short].includes(p.beneficiar)) grupuri[short].push(p.beneficiar);
+  });
+  _grupuriCache=grupuri;
+  container.innerHTML=`<span style="font-size:.72rem;color:var(--ink3);font-weight:600">Beneficiar:</span>
+    <button class="benef-btn ${!currentBeneficiar&&!currentBeneficiarGrup?'active':''}" onclick="filterBeneficiar(null,this)">Toți</button>
+    ${Object.entries(grupuri).map(([short,lista],gi)=>`<button class="benef-btn ${currentBeneficiarGrup&&lista.some(b=>currentBeneficiarGrup.includes(b))?'active':''}" onclick="filterBeneficiarGrup(${gi},this)">${short}</button>`).join('')}`;
+}
+
+function filterBeneficiar(b,btn){
+  currentBeneficiar=b;
+  currentBeneficiarGrup=null;
+  document.querySelectorAll('.benef-btn').forEach(x=>x.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderDashboard();
+}
+
+let currentBeneficiarGrup=null;
+let _grupuriCache={};
+function filterBeneficiarGrup(gi,btn){
+  const lista=Object.values(_grupuriCache)[gi]||[];
+  currentBeneficiar=null;
+  currentBeneficiarGrup=lista;
+  document.querySelectorAll('.benef-btn').forEach(x=>x.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderDashboard();
 }
 
 function renderDashboard(){
@@ -1368,6 +1596,9 @@ function renderDashboard(){
     else list=list.filter(p=>p.status===currentFilter);
   }
   if(currentSearch){const q=currentSearch.toLowerCase();list=list.filter(p=>p.titlu.toLowerCase().includes(q)||p.nrCIDS.toLowerCase().includes(q)||p.nrDGPI.toLowerCase().includes(q)||p.beneficiar.toLowerCase().includes(q));}
+  if(currentBeneficiar){list=list.filter(p=>p.beneficiar===currentBeneficiar);}
+  if(currentBeneficiarGrup&&currentBeneficiarGrup.length){list=list.filter(p=>currentBeneficiarGrup.includes(p.beneficiar));}
+  if(currentBeneficiarGrup){list=list.filter(p=>currentBeneficiarGrup.includes(p.beneficiar));}
   
   // Sortare: proiectele active se sorteaza dupa termenul cel mai apropiat (urgente primul)
   // Proiectele fara termen sau finalizate merg la final
@@ -1387,6 +1618,14 @@ function renderDashboard(){
     if(bDone) return -1;
     const ta = toMs(calcTermenEfectiv(a)) || toMs(a.termenFinalizare);
     const tb = toMs(calcTermenEfectiv(b)) || toMs(b.termenFinalizare);
+    const aDepasit = ta && ta < Date.now();
+    const bDepasit = tb && tb < Date.now();
+    // Depasit intotdeauna primul
+    if(aDepasit && !bDepasit) return -1;
+    if(!aDepasit && bDepasit) return 1;
+    // Ambele depasit: cel mai depasit primul (ta mai mic = depasit de mai mult timp)
+    if(aDepasit && bDepasit) return ta - tb;
+    // Ambele in termen: cel mai urgent primul
     if(!ta && !tb) return 0;
     if(!ta) return 1;
     if(!tb) return -1;
@@ -1402,8 +1641,10 @@ function renderDashboard(){
     const z=isDone?null:zilesRamase(tAfis);
     const pct=isDone?100:te?progressPct(p.dataOI||p.dataSemnare,te):progressPct(p.dataSemnare,p.termenFinalizare);
     const pcls=isDone?'progress-done':z!==null&&z<0?'progress-danger':pct>85?'progress-warn':'progress-ok';
-    return `<div class="project-card" onclick="showDetail(${p.id})">
+    const depasitTermen = !isDone && z !== null && z < 0 && p.status === 'În execuție';
+    return `<div class="project-card${depasitTermen?' card-depasit':''}" onclick="showDetail(${p.id})">
       <div class="card-status-bar status-${sc}"></div>
+      ${depasitTermen?`<div style="background:var(--red);color:white;font-size:.7rem;font-weight:700;padding:4px 12px;letter-spacing:.03em">⚠ TERMEN DEPĂȘIT cu ${Math.abs(z)} zile — în așteptare act adițional</div>`:''}
       <div class="card-header">
         <div class="card-nr">${p.nrCIDS} · ${p.nrDGPI}</div>
         <div class="card-title">${p.titlu}</div>
@@ -1814,7 +2055,7 @@ function showDetail(id){
   });
 
   const tlHtml=(p.etape||[]).map(e=>{
-    const dot=tlDot(e.status);
+    const depasit=etapaEsteDepasita(e,p);const dot=tlDot(e.status,depasit);
     return `<div class="tl-item" id="tl-${e.id}">
       <div class="tl-dot ${dot.cls}">${dot.lbl}</div>
       <div class="tl-content">
@@ -1826,6 +2067,7 @@ function showDetail(id){
         <div class="tl-meta">
           ${e.data?`<div class="tl-date">Data: <strong>${fmtDate(e.data)}</strong></div>`:''}
           ${e.termen?`<div class="tl-date">Termen: <strong>${fmtDate(e.termen)}</strong></div>`:''}
+          ${(()=>{if(e.status==='FINALIZAT')return '';const tms=calcTermenEtapaMs(e,p);const z=tms?Math.round((tms-Date.now())/86400000):null;if(z===null)return '';const cls=z<0?'danger':z<=7?'warn':'ok';const lbl=z<0?'Depășit '+Math.abs(z)+' zile':z===0?'AZI!':z+' zile rămase';return `<span class="etapa-zile ${cls}">${lbl}</span>`;})()}
         </div>
         ${e.obs?`<div class="tl-obs">${e.obs}</div>`:''}
       </div>
@@ -1867,7 +2109,7 @@ function showDetail(id){
       <div style="margin-top:10px;border-top:1px solid var(--bg2);padding-top:8px">
         <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Etape subcontractant</div>
         ${etapeS.map((e,ei)=>`<div style="display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px dashed var(--bg2);font-size:.78rem">
-          <span>${tlDot(e.status).lbl==='✓'?'✅':tlDot(e.status).lbl==='!'?'⚠️':'🔵'}</span>
+          <span>${(()=>{const dep=etapaEsteDepasita(e,p);return dep?'⚠️':tlDot(e.status).lbl==='✓'?'✅':tlDot(e.status).lbl==='!'?'⚠️':'🔵';})()}</span>
           <div style="flex:1">
             <div>${e.eveniment}</div>
             ${e.docLink?`<div style="margin-top:3px;display:flex;align-items:center;gap:5px">
@@ -1876,7 +2118,7 @@ function showDetail(id){
             </div>`:`<div style="margin-top:2px"><button class="btn-add-row" style="font-size:.68rem;padding:1px 6px" onclick="openModal('etapa-sub',${id},'${s.id}',${ei})">+ Doc</button></div>`}
           </div>
           ${e.termen?`<span style="color:var(--ink3);font-size:.72rem">${fmtDate(e.termen)}</span>`:''}
-          <span>${tsBadge(e.status)}</span>
+          <span>${tsBadge(e.status,etapaEsteDepasita(e,p))}</span>
           <button class="btn-icon" onclick="openModal('etapa-sub',${id},'${s.id}',${ei})">✏️</button>
           <button class="btn-icon del" onclick="deleteEtapaSub(${id},'${s.id}',${ei})">🗑</button>
         </div>`).join('')}
@@ -1977,6 +2219,16 @@ function showDetail(id){
       </div>
       <div class="detail-section full">
         <div class="section-header">
+          <div class="section-title">📓 Jurnal de activitate</div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          <input type="text" id="jurnal-input-${p.id}" class="form-input" style="flex:1" placeholder="Notează ce s-a întâmplat azi pe acest proiect..." onkeydown="if(event.key==='Enter')addJurnalEntry(${p.id})">
+          <button class="btn-add-row" onclick="addJurnalEntry(${p.id})">+ Adaugă</button>
+        </div>
+        <div id="jurnal-list-${p.id}"></div>
+      </div>
+      <div class="detail-section full">
+        <div class="section-header">
           <div class="section-title">📁 Documente & Fișiere (${(p.documente||[]).length})</div>
           <button class="btn-add-row" onclick="openModal('document',${p.id})">+ Document</button>
         </div>
@@ -1986,6 +2238,8 @@ function showDetail(id){
 
   document.getElementById('tab-detail').style.display='block';
   document.getElementById('btn-generator').style.display='inline-block';
+  // Initializeaza jurnalul
+  setTimeout(()=>renderJurnal(id),50);
   showPage('detail-page');
 }
 
@@ -2252,10 +2506,7 @@ function exportPDF(pid){
     }
 
     doc+='<p style="text-align:center;font-size:9pt;color:#999;margin-top:20pt">CIDS - Compania de Investitii si Dezvoltare Sectorul 1 S.A. | '+azi+'</p>';
-    doc+='</body></html>';
-
-    const blob=new Blob(['﻿'+doc],{type:'application/msword'});
-    const url=URL.createObjectURL(blob);
+    doc+='';    const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
     const nume='Raport_'+p.titlu.replace(/[^a-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'_').substring(0,30)+'.doc';
@@ -2674,6 +2925,145 @@ function deleteAlerta(pid,idx){
   saveData();
 }
 
+
+
+// ===================== JURNAL ACTIVITATE =====================
+function getJurnal(pid){
+  try{const j=localStorage.getItem('jurnal_'+pid);return j?JSON.parse(j):[];}catch(e){return [];}
+}
+function saveJurnal(pid,entries){
+  try{localStorage.setItem('jurnal_'+pid,JSON.stringify(entries));}catch(e){}
+}
+function addJurnalEntry(pid){
+  const text=document.getElementById('jurnal-input-'+pid)?.value?.trim();
+  if(!text)return;
+  const entries=getJurnal(pid);
+  entries.unshift({data:new Date().toLocaleDateString('ro-RO'),text});
+  saveJurnal(pid,entries);
+  document.getElementById('jurnal-input-'+pid).value='';
+  renderJurnal(pid);
+}
+function deleteJurnalEntry(pid,idx){
+  const entries=getJurnal(pid);
+  entries.splice(idx,1);
+  saveJurnal(pid,entries);
+  renderJurnal(pid);
+}
+function renderJurnal(pid){
+  const entries=getJurnal(pid);
+  const container=document.getElementById('jurnal-list-'+pid);
+  if(!container)return;
+  container.innerHTML=entries.length?entries.map((e,i)=>`
+    <div class="jurnal-entry">
+      <button class="jurnal-del" onclick="deleteJurnalEntry(${pid},${i})">✕</button>
+      <div class="jurnal-date">📅 ${e.data}</div>
+      <div class="jurnal-text">${e.text}</div>
+    </div>`).join(''):'<div class="empty-note">Nicio intrare în jurnal.</div>';
+}
+
+// ===================== CAUTARE GLOBALA DOCUMENTE =====================
+function openDocSearch(){
+  document.getElementById('doc-search-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('doc-search-input').focus(),100);
+  searchDocs('');
+}
+
+function searchDocs(q){
+  const results=[];
+  const ql=q.toLowerCase();
+  proiecte.forEach(p=>{
+    (p.documente||[]).forEach(d=>{
+      if(!q||d.nume.toLowerCase().includes(ql)||(d.obs||'').toLowerCase().includes(ql)){
+        results.push({proiect:p.titlu,pid:p.id,nume:d.nume,tip:d.tip,data:d.data,link:d.link,obs:d.obs});
+      }
+    });
+  });
+  const container=document.getElementById('doc-search-results');
+  if(!results.length){container.innerHTML='<div class="empty-note">Niciun document găsit.</div>';return;}
+  container.innerHTML=results.slice(0,50).map(r=>`
+    <div class="doc-search-result" onclick="document.getElementById('doc-search-modal').classList.remove('open');showDetail(${r.pid})">
+      <div style="font-size:1.2rem">${docIcon(r.tip)}</div>
+      <div style="flex:1;min-width:0">
+        <div class="doc-search-proj">${r.proiect}</div>
+        <div class="doc-search-name">${r.nume}</div>
+        ${r.obs?`<div style="font-size:.72rem;color:var(--ink3);font-style:italic">${r.obs}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+        ${r.data?`<span style="font-size:.7rem;color:var(--ink3)">${r.data}</span>`:''}
+        ${r.link?`<button class="btn-doc-open" style="font-size:.72rem;padding:3px 10px" onclick="event.stopPropagation();openDocPreview('${r.link}','${r.nume.replace(/'/g,"\'")}')">👁 Vezi</button>`:''}
+      </div>
+    </div>`).join('');
+  if(results.length>50)container.innerHTML+=`<div class="empty-note">${results.length-50} rezultate suplimentare — rafinează căutarea.</div>`;
+}
+
+// Inchide la click pe overlay
+const _dsm=document.getElementById('doc-search-modal');
+if(_dsm)_dsm.addEventListener('click',function(e){
+  if(e.target===this)this.classList.remove('open');
+});
+
+
+// ===================== EXPORT RAPORT LUNAR =====================
+function exportRaportLunar(){
+  const azi=new Date();
+  const lunaAn=azi.toLocaleDateString('ro-RO',{month:'long',year:'numeric'});
+  const active=proiecte.filter(p=>!['Finalizat','Predat','Închis'].includes(p.status));
+  
+  let rows='';
+  active.forEach(p=>{
+    const te=calcTermenEfectiv(p)||p.termenFinalizare;
+    const z=te?zilesRamase(te):null;
+    const statusIcon=z!==null&&z<0?'DEPASIT':z!==null&&z<=7?'CRITIC':z!==null&&z<=30?'ATENTIE':'OK';
+    const etapeActive=(p.etape||[]).filter(e=>e.status!=='FINALIZAT');
+    const nextEtapa=etapeActive[0];
+    const benef=p.beneficiar.includes('UTILITĂȚI')?'DUPS':p.beneficiar.includes('PATRIMONIU')?'DGPI':'Sector 1';
+    rows+='<tr>'
+      +'<td class="td">'+p.nrCIDS+'<br><span style="color:#666">'+p.nrDGPI+'</span></td>'
+      +'<td class="td" style="font-weight:600">'+p.titlu+'</td>'
+      +'<td class="td">'+benef+'</td>'
+      +'<td class="td" style="text-align:center">'+p.status+'</td>'
+      +'<td class="td" style="text-align:center">'+fmtMoney(p.valoare)+'</td>'
+      +'<td class="td" style="text-align:center">'+(te?fmtDate(te):'—')+'</td>'
+      +'<td class="td" style="text-align:center">'+statusIcon+(z!==null?' ('+z+' zile)':'')+'</td>'
+      +'<td class="td">'+(nextEtapa?nextEtapa.eveniment.substring(0,60):'—')+'</td>'
+      +'</tr>';
+  });
+
+  const valTotal=active.reduce((s,p)=>s+(p.valoare||0),0);
+  
+  const tdStyle='padding:7px;border:1px solid #ddd;font-size:11px;vertical-align:top;';
+  const thStyle='background:#c0392b;color:white;padding:8px;font-size:11px;text-align:left;';
+  
+  let html='<!DOCTYPE html><html><head><meta charset="UTF-8">';
+  html+='<style>';
+  html+='body{font-family:Arial,sans-serif;margin:30px;}';
+  html+='h1{color:#c0392b;font-size:16px;}';
+  html+='h2{font-size:13px;color:#333;}';
+  html+='table{width:100%;border-collapse:collapse;}';
+  html+='.th{'+thStyle+'}';
+  html+='.td{'+tdStyle+'}';
+  html+='</style></head><body>';
+  html+='<h1>CIDS — Compania de Investitii si Dezvoltare Sectorul 1 SA</h1>';
+  html+='<h2>Situatie portofoliu proiecte — '+lunaAn+'</h2>';
+  html+='<p style="font-size:11px">Generat: '+azi.toLocaleDateString('ro-RO')+' | Total proiecte active: '+active.length+' | Valoare totala: '+fmtMoney(valTotal)+'</p>';
+  html+='<table>';
+  html+='<tr><th class="th">Nr. Contract</th><th class="th">Denumire</th><th class="th">Beneficiar</th>';
+  html+='<th class="th">Status</th><th class="th">Valoare</th><th class="th">Termen</th>';
+  html+='<th class="th">Zile ramase</th><th class="th">Urmatoarea etapa</th></tr>';
+  html+=rows;
+  html+='</table>';
+  html+='<p style="font-size:10px;color:#999;margin-top:20px">Situatie generata automat de aplicatia CIDS Gestiune Proiecte</p>';
+  html+='</body></html>';
+
+  const blob=new Blob([html],{type:'application/msword'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='CIDS_Raport_'+lunaAn.replace(/ /g,'_')+'.doc';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // ===================== SALVARE & FIREBASE =====================
 function showSaveIndicator(msg, color){
   let el=document.getElementById('save-indicator');
@@ -2713,7 +3103,17 @@ function saveData(){
   }
 }
 
+function resetFirebase(){
+  if(!db){alert('Firebase nu e conectat.');return;}
+  if(!confirm('Resetează datele din cloud cu versiunea din fișier? Modificările manuale din cloud se vor pierde.')) return;
+  db.collection('cids').doc('proiecte')
+    .set({data:JSON.stringify(proiecte),ts:Date.now()})
+    .then(()=>{showSaveIndicator('✓ Cloud resetat cu succes','#2d6a4f');renderDashboard();})
+    .catch(e=>alert('Eroare: '+e.message));
+}
+
 // ===================== INIT =====================
+// v20260702-1
 const now=new Date();
 document.getElementById('sub-date').textContent='Actualizat '+now.toLocaleDateString('ro-RO',{day:'2-digit',month:'long',year:'numeric'})+' · Compania de Investiții și Dezvoltare Sectorul 1 SA';
 
@@ -2793,7 +3193,17 @@ renderDashboard();
                   return {...pCod, etape:etapeFinal, documente:documenteFinal, subcontractanti:subFinal,
                     status:pCod.status,
                     observatii:pCod.observatii,
-                    alerte:pCod.alerte
+                    alerte:pCod.alerte,
+                    termenFinalizare:pCod.termenFinalizare,
+                    ordineIncepere:pCod.ordineIncepere,
+                    valoare:pCod.valoare,
+                    nrCIDS:pCod.nrCIDS,
+                    nrDGPI:pCod.nrDGPI,
+                    dataSemnare:pCod.dataSemnare,
+                    gbe:pCod.gbe,
+                    gbeRestituire:pCod.gbeRestituire,
+                    sistari:pCod.sistari,
+                    acteAditionale:pCod.acteAditionale
                   };
                 });
                 renderDashboard();
