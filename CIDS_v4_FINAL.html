@@ -2359,7 +2359,16 @@ function openDocPreview(link, name){
 function closeDocPreview(){ }
 
 function renderDocs(p){
-  return (p.documente||[]).map((d,i)=>`
+  // Deduplica documentele la randare (nu la merge) - pastreaza prima aparitie per ID fisier
+  const extractId=l=>{if(!l)return null;const m=l.match(/\/d\/([a-zA-Z0-9_-]+)/);return m?m[1]:null;};
+  const vazute=new Set();
+  const docs=(p.documente||[]).filter(d=>{
+    const key=extractId(d.link)||d.link||(d.nume||'').trim().toLowerCase();
+    if(vazute.has(key))return false;
+    vazute.add(key);
+    return true;
+  });
+  return docs.map((d,i)=>`
     <div class="doc-item">
       <div class="doc-icon">${docIcon(d.tip)}</div>
       <div class="doc-content">
@@ -3215,7 +3224,7 @@ renderDashboard();
                   (pFirebase.etape||[]).forEach(eF=>{if(!idEtapeCod.has(eF.id)) etapeFinal.push(eF);});
                   
                   // Documente: folosim documentele din COD ca baza
-                  // Excludem documentele sterse (din lista neagra) si adaugam cele manuale
+                  // Excludem documentele sterse (din lista neagra) si adaugam cele manuale din Firebase
                   const cheieSterse='p'+pCod.id;
                   const sterseList=(sterseDoc&&sterseDoc[cheieSterse])||[];
                   const linkuriCod=new Set((pCod.documente||[]).map(d=>d.link||d.nume));
