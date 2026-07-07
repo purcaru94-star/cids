@@ -342,7 +342,24 @@ function excelDate(n){if(!n||isNaN(n)||n<1)return null;return new Date((n-25569)
 function fmtDate(n){const d=typeof n==='number'?excelDate(n):(n?new Date(n):null);if(!d||isNaN(d))return '—';return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'2-digit',year:'numeric'});}
 function toInputDate(n){const d=typeof n==='number'?excelDate(n):(n?new Date(n):null);if(!d||isNaN(d))return '';return d.toISOString().split('T')[0];}
 function fromInputDate(s){if(!s)return null;const d=new Date(s);return Math.round(d.getTime()/86400000+25569);}
-function zilesRamase(t){if(!t)return null;const azi=new Date();azi.setHours(0,0,0,0);const d=typeof t==='number'?excelDate(t):new Date(t);if(!d||isNaN(d))return null;return Math.round((d-azi)/86400000);}
+function zilesRamase(t,p){
+  if(!t) return null;
+  const d=typeof t==='number'?excelDate(t):new Date(t);
+  if(!d||isNaN(d)) return null;
+  // Daca proiectul e suspendat si are sistare activa, termenul nu curge
+  // Afisam zilele ramase la data sistarii, nu fata de azi
+  if(p && p.status==='Suspendat' && p.sistari && p.sistari.length>0){
+    const sistarActiva=p.sistari.find(s=>s.dataStart && !s.dataStop);
+    if(sistarActiva){
+      const dataSistare=new Date(sistarActiva.dataStart);
+      dataSistare.setHours(0,0,0,0);
+      const zileRamaseLaSistare=Math.round((d-dataSistare)/86400000);
+      return zileRamaseLaSistare; // Zile ramase la data sistarii (pozitiv = mai era timp)
+    }
+  }
+  const azi=new Date();azi.setHours(0,0,0,0);
+  return Math.round((d-azi)/86400000);
+}
 function zilesLabel(z){if(z===null)return '';if(z>0)return z+' zile rămase';if(z===0)return 'Astăzi!';return 'Depășit '+Math.abs(z)+' zile';}
 function zilesClass(z,s){if(s==='Finalizat'||s==='Închis'||s==='Predat')return 'zile-done';if(z===null)return 'zile-done';if(z>30)return 'zile-ok';if(z>0)return 'zile-warn';return 'zile-danger';}
 function fmtMoney(v){if(!v)return '—';return Number(v).toLocaleString('ro-RO',{minimumFractionDigits:0,maximumFractionDigits:0})+' lei';}
@@ -445,7 +462,7 @@ let proiecte=[
     {id:'e1-24',eveniment:"Aviz Directia Cultura Bucuresti FAVORABIL 18.05.2026",data:46169,termen:46169,status:"FINALIZAT",obs:"AVIZ FAVORABIL pentru lucrarile solicitate",docLink:"https://drive.google.com/file/d/1Pln6l7jYVDStvERxzofBfLoK-ZcZW5HF/view",docNume:"32. Aviz Dir.Cultura FAVORABIL"},
     {id:'e1-25',eveniment:"Plata taxa timbru arhitectura OAR 3.611,58 lei 19.05.2026",data:46170,termen:46170,status:"FINALIZAT",obs:"Taxa timbru OAR achitata",docLink:"https://drive.google.com/file/d/1ladCtrItkEVhL7OpgrIOKkbwkI3c_DAL/view",docNume:"33. Taxa timbru OAR"},
     {id:'e1-26',eveniment:"Completare dosar cerere AC PMB 84036/20.05.2026",data:46171,termen:46171,status:"FINALIZAT",obs:"Completare dosar cerere AC cu aviz MC + taxa timbru",docLink:"https://drive.google.com/file/d/1lqaMuPPSHULtAD5TGPtL8dWeKC89MOUD/view",docNume:"34. Dovada completare dosar cerere AC"},
-    {id:'e1-27',eveniment:"Emitere Autorizatie de Construire de catre PMB",data:null,termen:null,status:"ÎN TERMEN",obs:"In asteptarea emiterii AC de catre PMB"},
+    {id:'e1-27',eveniment:"Autorizatie de Construire nr.141/36687/02.07.2026 obtinuta de la PMB",data:46209,termen:46209,status:"FINALIZAT",obs:"AC PMB nr.141/36687 — Reabilitare Sala Sport Sc.Surzi. Valoare lucrari: 722.315,45 lei. Valabilitate 24 luni (pana 02.07.2028). Durata executie: 24 luni de la OI. Baza: CU 705/15.11.2024, Aviz MC 345/14.05.2026, Aviz ISU 423/27.06.2025.",docLink:"https://drive.google.com/file/d/1Ekv_CsICCS5iI5PR1DgbQUzCcWL8mYeJ/view",docNume:"37. AC nr.141/36687/02.07.2026 Scoala de Surzi"},
     {id:'e1-28',eveniment:"Ordin de incepere executie lucrari",data:null,termen:null,status:"ÎN TERMEN",obs:"Dupa obtinerea AC — termen executie: 12 luni"},
     {id:'e1-29',eveniment:"PV receptie la terminarea lucrarilor",data:null,termen:null,status:"ÎN TERMEN",obs:"Dupa finalizarea executiei"},
     {id:'e1-30',eveniment:"Receptie finala dupa 36 luni garantie",data:null,termen:null,status:"ÎN TERMEN",obs:"36 luni de la PV receptie terminare lucrari"}
@@ -463,7 +480,7 @@ let proiecte=[
         {nume:"Expertiza Tehnica Scoala Surzi",tip:"Altele",data:"",link:"https://drive.google.com/file/d/1tRxjdgO7yQBVoXkgJVl__8XXuMaWk6XE/view",obs:"Expertiza tehnica elaborata de HAUZE GROUP"}
       ]}
    ],
-   alerte:[],
+   alerte:[{tip:"info",text:"AC NR.141/36687/02.07.2026 OBTINUTA de la PMB! Valoare lucrari: 722.315 lei. Urmează: anunt PMB (F.13) + anunt ISC (F.14) + plata cota ISC 0,1% (722,32 lei) + panou santier. Dupa indeplinire: emitere OI executie."}],
    documente:[
     {nume:"7. Contract DGPI 6/29.12.2025 — CIDS 56/29.12.2025",tip:"Contract",data:"29.12.2025",link:"https://drive.google.com/file/d/1lxz0cWe9DoB7rn9kNTmutv1gFUoq2PyR/view",obs:"1.091.212 lei fara TVA — proiectare 2 luni + executie 12 luni"},
     {nume:"10. Dovada constituire GBE 55.494,48 lei — 08.01.2026",tip:"Garanție",data:"08.01.2026",link:"https://drive.google.com/file/d/1jEa3kwawPLnDSnoJFYVxFNXiK4bHf39x/view",obs:"GBE 5% = 55.494,48 lei constituita la Trezorerie"},
@@ -483,7 +500,11 @@ let proiecte=[
     {nume:"28. DGPI 520/06.04.2026 — Cerere informare detaliata proiect",tip:"Altele",data:"06.04.2026",link:"https://drive.google.com/file/d/1oIASvCCNmGECbFpLOPpHfA8CN5DP5SJU/view",obs:"PS1 solicita informare detaliata stadiu proiect Sc. de Surzi"},
     {nume:"30. Imputernicire Platon Ana 523/06.04.2026",tip:"Altele",data:"06.04.2026",link:"https://drive.google.com/file/d/1vMwA6MLWVBLmOZjkqSl4Z9KP4MePH9uQ/view",obs:"Imputernicire depunere documentatie + ridicare avize"},
     {nume:"31. DGPI 585/06.04.2026 — Stadiu lucrari Sc. de Surzi",tip:"Altele",data:"06.04.2026",link:"https://drive.google.com/file/d/1sGo6IverVg0FggAhH50dBCV8tLsQJCnd/view",obs:"Raport stadiu: DTAC depus PMB 36687/06.03.2026, in curs aviz Ministerul Culturii"}
-  ]},  {id:2,titlu:"13. Campus Agronomie",nrDGPI:"DGPI 8/31.12.2025",nrCIDS:"CIDS 59/31.12.2025",contractLink:"https://drive.google.com/file/d/1bIOBJRdP2dRm_R7eEVbHzXsTQGWtAvLU/view",beneficiar:"DIRECȚIA DE UTILITĂȚI PUBLICE, SALUBRIZARE și PROTECȚIA MEDIULUI SECTOR 1",valoare:772586.54,dataSemnare:46022,termenFinalizare:46387,tip:"Proiectare",status:"Suspendat",gbe:"38.629,33 lei (5%)",gbeRestituire:"100% in 14 zile de la semnare PV receptie",observatii:"Servicii proiectare SF Campus educational multifunctional USAMV Blvd. Marati nr.59. Contract suspendat — lipsa CU. CU emis 21.05.2026. Studii geotehnice si istorice receptionate. Termen predare SF estimat 30.06-03.07.2026.",ordineIncepere:[{tip:"Proiectare SF",data:"2026-01-31",durata:150,termen:null,status:"Suspendat — CU emis 21.05.2026, reluare în curs"}],sistari:[{dataStart:"2026-03-26",dataStop:null}],acteAditionale:[],
+  ,
+    {nume:"36. Imputernicire Ana Platon Sc. de Surzi 07.07.2026",tip:"Altele",data:"07.07.2026",link:"https://drive.google.com/file/d/1KTjmt5-LR-SwdF1IdiC51nLHrfYcTEE0/view",obs:"Imputernicire depunere/ridicare AC si alte documente PMB pentru Scoala de Surzi"},
+    {nume:"37. Autorizatie de Construire nr.141/36687/02.07.2026 — Scoala de Surzi",tip:"Autorizație",data:"02.07.2026",link:"https://drive.google.com/file/d/1Ekv_CsICCS5iI5PR1DgbQUzCcWL8mYeJ/view",obs:"AC PMB nr.141/36687 — Reabilitare si modernizare Sala de Sport si teren de sport Sc.Surzi nr.1, Str. Neatarnarii nr.3. Valoare lucrari: 722.315,45 lei. Valabilitate: 24 luni de la emitere (pana 02.07.2028). Durata executie: 24 luni de la inceperea efectiva. Obligatii: anunt ISU (F.14) + cota 0,1% ISC, anunt PMB (F.13), panou santier."},
+    {nume:"PV Avizare PT Hauze Group Sc.de Surzi Nr.454-25.03.2026",tip:"PV",data:"25.03.2026",link:"https://drive.google.com/file/d/1XjY7d0VFPWUCLbCkXpRZm1B-FfYcORYC/view",obs:"PV avizare proiect tehnic de catre HAUZE GROUP — versiune nesemnata/duplicat"},
+    {nume:"15. Contract HAUZE GROUP 3/26.01.2026 — proiectare DTAC+PT+DE Sc.Surzi",tip:"Contract",data:"26.01.2026",link:"https://drive.google.com/file/d/1JbP0JrnzoWcfFaVjc9mKrlO5P3qTUP6h/view",obs:"Contract subcontractant HAUZE GROUP pentru elaborare DTAC, PT si DE — Scoala Gimnaziala pentru Surzi nr.1"}]},  {id:2,titlu:"13. Campus Agronomie",nrDGPI:"DGPI 8/31.12.2025",nrCIDS:"CIDS 59/31.12.2025",contractLink:"https://drive.google.com/file/d/1bIOBJRdP2dRm_R7eEVbHzXsTQGWtAvLU/view",beneficiar:"DIRECȚIA DE UTILITĂȚI PUBLICE, SALUBRIZARE și PROTECȚIA MEDIULUI SECTOR 1",valoare:772586.54,dataSemnare:46022,termenFinalizare:46387,tip:"Proiectare",status:"Suspendat",gbe:"38.629,33 lei (5%)",gbeRestituire:"100% in 14 zile de la semnare PV receptie",observatii:"Servicii proiectare SF Campus educational multifunctional USAMV Blvd. Marati nr.59. Contract suspendat — lipsa CU. CU emis 21.05.2026. Studii geotehnice si istorice receptionate. Termen predare SF estimat 30.06-03.07.2026.",ordineIncepere:[{tip:"Proiectare SF",data:"2026-01-31",durata:150,termen:null,status:"Suspendat — CU emis 21.05.2026, reluare în curs"}],sistari:[{dataStart:"2026-03-26",dataStop:null}],acteAditionale:[],
    etape:[
     {id:'e2-1',eveniment:"PS1 Invitatie participare 1356/22.12.2025",data:46013,termen:46013,status:"FINALIZAT",obs:"Invitatie participare servicii proiectare Campus USAMV",docLink:"https://drive.google.com/file/d/1NQKr8CDiXhQi5HACw5eTeQzF4pvwi_99/view",docNume:"1. Invitatie participare Campus Agronomie"},
     {id:'e2-2',eveniment:"Scrisoare inaintare oferta CIDS 2170/29.12.2025",data:46020,termen:46020,status:"FINALIZAT",obs:"Oferta tehnico-financiara SF Campus USAMV",docLink:"https://drive.google.com/file/d/17TZBktJvwVokuDzRxbeT_6WANcTQbZ7l/view",docNume:"2. Oferta Campus Agronomie"},
@@ -1096,6 +1117,15 @@ let proiecte=[
         {nume:"21. Contract MOBIUS DESIGN DALI Resist. Str. Copilului",tip:"Contract",data:"28.05.2026",link:"https://drive.google.com/file/d/15F3n1lxph_Cb1t0IgOjUgmx2qy28E5Kf/view",obs:"Elaborare DALI inclusiv studii conexe"},
         {nume:"Tema de proiectare Strada Copilului 08.06.2026",tip:"Altele",data:"08.06.2026",link:"https://drive.google.com/file/d/1pqchbQUbFpFMujr6EaeHnNfmQEZvmWyo/view",obs:"Tema de proiectare elaborata conform Ctr. DGPI 2/18.05.2026"},
         {nume:"Tema proiectare semnata de Primar 12.06.2026",tip:"Altele",data:"12.06.2026",link:"https://drive.google.com/file/d/1NGK2JHXvXhBBWQJ2F4OF4spMoUUGw57M/view",obs:"Tema de proiectare aprobata si semnata"}
+      ],},
+   
+    {id:'s10-2',firma:"TERRARCH S.R.L.",obiect:"Studii geotehnic+hidrologic+trafic+expertiza tehnica Str. Copilului",contract:"Ctr. 32/03.06.2026",valoare:"53.000 lei fara TVA",dataSemnare:46181,termen:46211,status:"ÎN TERMEN",gbe:"",penalitati:"0,01%/zi",link:"https://drive.google.com/file/d/1tOKr24gZo7XNujzrd6Yj2mpFUaXZQjt4/view",obs:"Termen predare 30 zile de la semnare (03.06.2026) = 03.07.2026. Studii necesare pentru DALI.",
+      etape:[
+        {id:'es10-2-1',eveniment:"Semnare contract TERRARCH 32/03.06.2026",data:46181,termen:46181,status:"FINALIZAT",obs:"53.000 lei fara TVA",docLink:"https://drive.google.com/file/d/1tOKr24gZo7XNujzrd6Yj2mpFUaXZQjt4/view",docNume:"34. Contract TERRARCH 32/03.06.2026"},
+        {id:'es10-2-2',eveniment:"Predare studii TERRARCH (30 zile = 03.07.2026)",data:null,termen:46211,status:"ÎN TERMEN",obs:"Geotehnic+hidrologic+trafic+expertiza tehnica — 3 ex. originale + electronic PDF"}
+      ],
+      documente:[
+        {nume:"34. Contract TERRARCH 32/03.06.2026 Studii Str.Copilului",tip:"Contract",data:"03.06.2026",link:"https://drive.google.com/file/d/1tOKr24gZo7XNujzrd6Yj2mpFUaXZQjt4/view",obs:"53.000 lei fara TVA — studii DALI Str. Copilului"}
       ]}
    ],
    alerte:[{tip:"info",text:"CU emis 09.06.2026. Tema proiectare avizata favorabil PS1. Avize in curs: DISTRIGAZ AVIZ FAVORABIL 29.06.2026 (primul aviz obtinut). Termen DALI: 45 zile de la CU."}],
@@ -1353,7 +1383,8 @@ let proiecte=[
     {nume:"11. IO Construct Contract 34/24.06.2026 — Executie lucrari C13 Odai",tip:"Contract",data:"24.06.2026",link:"https://drive.google.com/file/d/1-FHwjjP3LE-DW5u4lTOm4py3mSeFpXjw/view",obs:"Contract subcontractant executie lucrari reconfigurare birouri C13 Sos. Odai"},
     {nume:"12. IO CONSTRUCT GBE Odai C13",tip:"Garanție",data:"02.07.2026",link:"https://drive.google.com/file/d/1L8CoOdZcI-UbfMAbKIZrlsI_N4OKEftK/view",obs:"Garantie de buna executie IO CONSTRUCT pentru lucrari C13 Odai"},
     {nume:"13. Ordin incepere lucrari C13 Odai",tip:"Ordin",data:"02.07.2026",link:"https://drive.google.com/file/d/1q0_ZU_euE8cduQ6i6iKAGX2NgzqxcBGy/view",obs:"Ordin de incepere lucrari emis catre IO CONSTRUCT pentru executie C13 Odai"}
-   ]},
+   ,
+    {nume:"14. OCEAN 2000 Contract 29/28.05.2026 Odai C13 (exemplar scanat)",tip:"Contract",data:"28.05.2026",link:"https://drive.google.com/file/d/1DfWvQ0QCYjH82tQEeTPNNpnkY0F9prQY/view",obs:"Contract OCEAN 2000 nr.29/28.05.2026 — servicii proiectare C13 Odai (exemplar complet scanat)"}]},
 
   {id:17,titlu:"25. Bujori de matache",nrDGPI:"Oferta 686/30.04.2026",nrCIDS:"—",contractLink:"",beneficiar:"SECTORUL 1 AL MUNICIPIULUI BUCUREȘTI",valoare:2700,dataSemnare:46147,termenFinalizare:46163,tip:"Servicii / Studii",status:"Finalizat",gbe:"—",gbeRestituire:"—",observatii:"Servicii elaborare documentatie tehnica avize — amenajare spatiu public Bujori in Matache, Piata Matache. 2.700 lei. PV predare-primire documentatie 21.05.2026.",
    etape:[
@@ -1683,7 +1714,7 @@ function renderDashboard(){
     const te=calcTermenEfectiv(p);
     const tAfis=te||p.termenFinalizare;
     const isDone=p.status==='Finalizat'||p.status==='Închis'||p.status==='Predat';
-    const z=isDone?null:zilesRamase(tAfis);
+    const z=isDone?null:zilesRamase(tAfis,p);
     const pct=isDone?100:te?progressPct(p.dataOI||p.dataSemnare,te):progressPct(p.dataSemnare,p.termenFinalizare);
     const pcls=isDone?'progress-done':z!==null&&z<0?'progress-danger':pct>85?'progress-warn':'progress-ok';
     const depasitTermen = !isDone && z !== null && z < 0 && p.status === 'În execuție';
@@ -2091,7 +2122,7 @@ function showDetail(id){
   const sc=scKey(p.status);
   const teDetail=calcTermenEfectiv(p);
   const isDoneDetail=p.status==='Finalizat'||p.status==='Închis'||p.status==='Predat';
-  const z=isDoneDetail?null:zilesRamase(teDetail||p.termenFinalizare);
+  const z=isDoneDetail?null:zilesRamase(teDetail||p.termenFinalizare,p);
   let totalSub=0;
   (p.subcontractanti||[]).forEach(s=>{
     const raw=(s.valoare||'').replace(/\./g,'').replace(',','.').replace(/[^0-9.]/g,'');
@@ -3310,7 +3341,4 @@ renderDashboard();
 
 </body>
 </html,
-    {nume:"4. Nota comanda AMBIENT STAR SRL Igienizare Banu Manta 01.07.2026",tip:"Contract",data:"01.07.2026",link:"https://drive.google.com/file/d/1HAn9GGcVIx4ikoc2nQ1nDyQI0KfbFXk8/view",obs:"8.350 lei fara TVA. Termen: 2 zile lucratoare. AMBIENT STAR SRL — igienizare pardoseli+pereti birou registratura Blvd. Banu Manta"}>]},
-    {id:'s10-2',firma:"TERRARCH S.R.L.",obiect:"Studii geotehnic+hidrologic+trafic+expertiza tehnica Str. Copilului",contract:"Ctr. 32/03.06.2026",valoare:"53.000 lei fara TVA",dataSemnare:46181,termen:46211,status:"ÎN TERMEN",gbe:"",penalitati:"0,01%/zi",link:"https://drive.google.com/file/d/1tOKr24gZo7XNujzrd6Yj2mpFUaXZQjt4/view",obs:"Termen predare 30 zile = 03.07.2026.",
-      etape:[{id:'es10-2-1',eveniment:"Semnare contract",data:46181,termen:46181,status:"FINALIZAT",obs:"",docLink:"https://drive.google.com/file/d/1tOKr24gZo7XNujzrd6Yj2mpFUaXZQjt4/view",docNume:"34. Contract TERRARCH 32/03.06.2026"}],
-      documente:[{nume:"34. Contract TERRARCH 32/03.06.2026",tip:"Contract",data:"03.06.2026",link:"https://drive.google.com/file/d/1tOKr24gZo7XNujzrd6Yj2mpFUaXZQjt4/view",obs:"53.000 lei — studii DALI"}]}
+    {nume:"4. Nota comanda AMBIENT STAR SRL Igienizare Banu Manta 01.07.2026",tip:"Contract",data:"01.07.2026",link:"https://drive.google.com/file/d/1HAn9GGcVIx4ikoc2nQ1nDyQI0KfbFXk8/view",obs:"8.350 lei fara TVA. Termen: 2 zile lucratoare. AMBIENT STAR SRL — igienizare pardoseli+pereti birou registratura Blvd. Banu Manta"}>]}
