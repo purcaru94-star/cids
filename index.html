@@ -1602,7 +1602,7 @@ let proiecte=[
    documente:[
     {nume:"Folder Drive — Arhiva Strada Biharia",tip:"Altele",data:"",link:"https://drive.google.com/drive/folders/1l3x5X-4S0ifiJeSNvmjg4Yfa6kaYiYWk",obs:"Folder arhiva proiect Drive"}
    ]},
-  {id:22,titlu:"35. Igienizare Bir. Registratura PS1",nrDGPI:"",nrCIDS:"CIDS 965/09.06.2026",contractLink:"https://drive.google.com/file/d/1HAn9GGcVIx4ikoc2nQ1nDyQI0KfbFXk8/view",beneficiar:"PRIMĂRIA SECTORULUI 1 — Serviciul Administrativ",valoare:8820,dataSemnare:46208,termenFinalizare:46210,tip:"Servicii",status:"Finalizat",gbe:"",gbeRestituire:"",observatii:"Igienizare spatiu birouri Registratura PS1, Banu Manta nr.9 — pardoseala ~20mp, pereti+tavan ~65mp. Oferta CIDS 8.820 lei fara TVA (10.672,20 lei cu TVA). Referat necesitate 261/15.06.2026, Nota justificativa 1654/16.06.2026. PS1 a aprobat inceperea lucrarilor 25.06.2026. Lucrari executate si receptionate — PV D305/07.07.2026, conforme cantitativ si calitativ. Factura CIDS FF219/15.07.2026 emisa catre PS1, scadenta 14.08.2026.",
+  {id:22,titlu:"35. Igienizare Bir. Registratura PS1",nrDGPI:"",nrCIDS:"CIDS 965/09.06.2026",contractLink:"https://drive.google.com/file/d/1HAn9GGcVIx4ikoc2nQ1nDyQI0KfbFXk8/view",beneficiar:"PRIMĂRIA SECTORULUI 1 — Serviciul Administrativ",valoare:8820,dataSemnare:46208,termenFinalizare:46210,tip:"Servicii",status:"Finalizat",gbe:"",gbeRestituire:"",observatii:"Igienizare spatiu birouri Registratura PS1, Banu Manta nr.9 — pardoseala ~20mp, pereti+tavan ~65mp. Oferta CIDS 8.820 lei fara TVA (10.672,20 lei cu TVA). Referat necesitate 261/15.06.2026, Nota justificativa 1654/16.06.2026. PS1 a aprobat inceperea lucrarilor 25.06.2026. CIDS a subcontractat executia efectiva catre AMBIENT STAR SRL (nota comanda 01.07.2026, 8.350 lei fara TVA). Lucrari executate si receptionate — PV D305/07.07.2026, conforme cantitativ si calitativ. Factura CIDS FF219/15.07.2026 emisa catre PS1, scadenta 14.08.2026.",
    etape:[
     {id:'e22-1',eveniment:"PS1 Solicitare oferta igienizare birouri registratura",data:46181,termen:46181,status:"FINALIZAT",obs:"Solicitare Serviciul Administrativ PS1 — 09.06.2026",docLink:"https://drive.google.com/file/d/1mmBE1soOSjRocXE5JqHDijK_jPVZ0UTH/view",docNume:"Solicitare oferta igienizare bir. registratura PS1"},
     {id:'e22-2',eveniment:"Transmitere oferta CIDS 965/09.06.2026 — 8.820 lei fara TVA",data:46181,termen:46181,status:"FINALIZAT",obs:"Oferta transmisa catre PS1 — valabilitate 30 zile de la emitere",docLink:"https://drive.google.com/file/d/1D6-bRYFbvbmzCo9OsYlL3bpxakCq5Dzg/view",docNume:"Oferta de pret servicii igienizare bir. registratura"},
@@ -1611,7 +1611,17 @@ let proiecte=[
     {id:'e22-5',eveniment:"Factura CIDS FF219/15.07.2026 — 10.672,20 lei cu TVA",data:46218,termen:46248,status:"FINALIZAT",obs:"Factura emisa catre PS1 in baza PV D305/07.07.2026 — scadenta 14.08.2026",docLink:"https://drive.google.com/file/d/1lqaQLuLJfkHC6DdEEhWymy1yIQT01ZAG/view",docNume:"6. CIDS FF 219/15.07.2026 Igienizare Registratura"},
     {id:'e22-6',eveniment:"Incasare factura FF219",data:null,termen:46248,status:"ÎN TERMEN",obs:"Termen scadenta: 14.08.2026 — se asteapta plata de la PS1"}
    ],
-   subcontractanti:[],
+   subcontractanti:[
+    {id:'s22-1',firma:"AMBIENT STAR S.R.L.",obiect:"Executie efectiva a lucrarilor de igienizare spatiu birouri Registratura PS1",contract:"Nota de comanda 01.07.2026",valoare:"8.350 lei fara TVA",dataSemnare:46204,termen:46206,status:"FINALIZAT",gbe:"",penalitati:"",link:"https://drive.google.com/file/d/1uICCircNSVC17JeyVc1pVl1sWAsOhhvi/view",obs:"CIDS a subcontractat executia efectiva catre AMBIENT STAR SRL (Str.Hrisovului 2-4, administrator Florin Dina). Termen executie: max 2 zile lucratoare de la primirea notei de comanda.",
+      etape:[
+        {id:'es22-1-1',eveniment:"Nota de comanda catre AMBIENT STAR SRL",data:46204,termen:46206,status:"FINALIZAT",obs:"8.350 lei fara TVA — igienizare pardoseala 20mp + pereti 65mp",docLink:"https://drive.google.com/file/d/1uICCircNSVC17JeyVc1pVl1sWAsOhhvi/view",docNume:"4. Nota comanda Servicii igienizare — AMBIENT STAR"},
+        {id:'es22-1-2',eveniment:"Factura AMBIENT STAR FF 000001/03.07.2026",data:46206,termen:46206,status:"FINALIZAT",obs:"Factura subcontractant pentru serviciile prestate",docLink:"https://drive.google.com/file/d/1ew6bGXwLfi7wyO9JNtiQ2KPg4A4rBFbo/view",docNume:"7. AMBIENT STAR FF 000001/03.07.2026"}
+      ],
+      documente:[
+        {nume:"4. Nota comanda Servicii igienizare — AMBIENT STAR",tip:"Contract",data:"01.07.2026",link:"https://drive.google.com/file/d/1uICCircNSVC17JeyVc1pVl1sWAsOhhvi/view",obs:"8.350 lei fara TVA"},
+        {nume:"7. AMBIENT STAR FF 000001/03.07.2026",tip:"Factură",data:"03.07.2026",link:"https://drive.google.com/file/d/1ew6bGXwLfi7wyO9JNtiQ2KPg4A4rBFbo/view",obs:"Factura subcontractant AMBIENT STAR SRL"}
+      ]}
+   ],
    alerte:[{tip:"info",text:"Lucrari finalizate si receptionate (PV D305/07.07.2026). Factura FF219/15.07.2026 emisa, 10.672,20 lei cu TVA — se asteapta incasare pana la 14.08.2026."}],
    documente:[
     {nume:"Solicitare oferta igienizare bir. registratura PS1 09.06.2026",tip:"Altele",data:"09.06.2026",link:"https://drive.google.com/file/d/1mmBE1soOSjRocXE5JqHDijK_jPVZ0UTH/view",obs:"Solicitare Serviciul Administrativ PS1 — Banu Manta nr.9"},
