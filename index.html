@@ -1374,12 +1374,25 @@ let proiecte=[
     {id:'e13-10',eveniment:"Etapa II — Predare Tema de proiectare",data:null,termen:46262,status:"ÎN TERMEN",obs:"Termen: 28.08.2026 (30 zile de la OI 28.07.2026, conform NCPC art.181)"},
     {id:'e13-11',eveniment:"Etapa I — Predare Expertiza tehnica",data:null,termen:46292,status:"ÎN TERMEN",obs:"Termen: 27.09.2026 (60 zile de la OI 28.07.2026, conform NCPC art.181)"},
     {id:'e13-12',eveniment:"Etapa III — Predare DALI cu studii conexe",data:null,termen:46342,status:"ÎN TERMEN",obs:"Termen: 16.11.2026 (110 zile de la OI 28.07.2026, conform NCPC art.181)"},
-    {id:'e13-13',eveniment:"Etapa IV — Verificare documentatii de verificatori atestati",data:null,termen:null,status:"ÎN TERMEN",obs:"Termen: 10 zile de la predarea documentatiei complete (dupa finalizarea Etapei III)"}
+    {id:'e13-13',eveniment:"Etapa IV — Verificare documentatii de verificatori atestati",data:null,termen:null,status:"ÎN TERMEN",obs:"Termen: 10 zile de la predarea documentatiei complete (dupa finalizarea Etapei III)"},
+    {id:'e13-14',eveniment:"Solicitare redenumire obiectiv contract — CIDS 1407/03.08.2026",data:46237,termen:null,status:"IN ASTEPTARE RASPUNS PS1",obs:"CIDS solicita PS1 sa analizeze necesitatea si oportunitatea modificarii denumirii obiectivului din Contractul DGPI 5/21.07.2026, din 'Construire Piata Agroalimentara in Cartier Pajura' in 'realizarea unei piete agroalimentare moderne - Piata Pajura' (denumirea folosita in Nota Conceptuala si in Certificatul de Urbanism), prin incheierea unui Act Aditional. Solicitare motivata de necesitatea corelarii denumirii intre toate documentele proiectului. Nu exista inca un raspuns de la PS1.",docLink:"https://drive.google.com/file/d/1YaFW56w6SM4wqrBnu0gbvn4Mal5OxJvQ/view",docNume:"16. Cerere redenumire Construire Piata Agroalimentara in Cartier Pajura"}
    ],
-   subcontractanti:[],
+   subcontractanti:[
+    {id:'s13-1',firma:"ALFA GON S.R.L.",obiect:"Servicii topo-cadastrale (2 contracte distincte): studiu topografic WGS84 + servicii topo-cadastrale complete",contract:"Ctr.52/06.08.2026 + Ctr.53/06.08.2026",valoare:"conform Anexa 1 la fiecare contract",dataSemnare:46240,termen:46270,status:"ÎN TERMEN",gbe:"",penalitati:"",link:"https://drive.google.com/file/d/1brzpgjgHPOk_DQa_7QJtZ3EwK3sn8ibK/view",obs:"Doua contracte separate semnate aceeasi zi (06.08.2026): Contract 52 (studiu topografic sistem WGS84, cumparare directa DA40909963, durata max 10 zile → termen 16.08.2026) si Contract 53 (servicii topo-cadastrale complete, cumparare directa DA40910073, durata max 30 zile → termen 05.09.2026). Ambele pentru amplasamentul Piata Pajura, str.Pajurei nr.7B.",
+      etape:[
+        {id:'es13-1-1',eveniment:"Semnare Contract 52 — studiu topografic WGS84",data:46240,termen:46250,status:"FINALIZAT",obs:"Durata max 10 zile de la semnare → termen 16.08.2026",docLink:"https://drive.google.com/file/d/1brzpgjgHPOk_DQa_7QJtZ3EwK3sn8ibK/view",docNume:"17. Contract 52-06.08.2026 ALFA GON TOPO Piata Pajura"},
+        {id:'es13-1-2',eveniment:"Semnare Contract 53 — servicii topo-cadastrale",data:46240,termen:46270,status:"FINALIZAT",obs:"Durata max 30 zile de la semnare → termen 05.09.2026",docLink:"https://drive.google.com/file/d/1dzFKb6Sqea-QTrXPC-OAaUpmLcIPA_yH/view",docNume:"18. Contract 53-06.08.2026 ALFA GON Serv.TOPO CADASTRALE Piata Pajura"}
+      ],
+      documente:[
+        {nume:"17. Contract 52-06.08.2026 ALFA GON TOPO Piata Pajura",tip:"Contract",data:"06.08.2026",link:"https://drive.google.com/file/d/1brzpgjgHPOk_DQa_7QJtZ3EwK3sn8ibK/view",obs:"Studiu topografic WGS84 — termen 16.08.2026"},
+        {nume:"18. Contract 53-06.08.2026 ALFA GON Serv.TOPO CADASTRALE Piata Pajura",tip:"Contract",data:"06.08.2026",link:"https://drive.google.com/file/d/1dzFKb6Sqea-QTrXPC-OAaUpmLcIPA_yH/view",obs:"Servicii topo-cadastrale complete — termen 05.09.2026"}
+      ]}
+   ],
    alerte:[
     {tip:"info",text:"Contract semnat 21.07.2026, GBE constituita, CU obtinut, OI emis 27.07.2026 — servicii incepute 28.07.2026."},
-    {tip:"warn",text:"Termen apropiat: Etapa II (Tema de proiectare) — 28.08.2026."}
+    {tip:"warn",text:"Termen apropiat: Etapa II (Tema de proiectare) — 28.08.2026."},
+    {tip:"info",text:"Subcontractant ALFA GON angajat (2 contracte, 06.08.2026) pentru servicii topografice/cadastrale necesare Etapelor de proiectare."},
+    {tip:"info",text:"CIDS a solicitat PS1 (03.08.2026) redenumirea obiectivului contractului prin Act Aditional, pentru corelare cu Nota Conceptuala si CU — in asteptare raspuns."}
    ],
    documente:[
     {nume:"Declaratie conformitate CIDS 570/16.04.2026",tip:"Altele",data:"16.04.2026",link:"https://drive.google.com/file/d/1UJUy3BO7fSNP5_bpimhKKMGkQGGI7crn/view",obs:"Declaratie art.31 Legea 98/2016"},
