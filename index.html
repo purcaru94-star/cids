@@ -3315,8 +3315,11 @@ function showDetail(id){
   const z=isDoneDetail?null:zilesRamase(teDetail||p.termenFinalizare,p);
   let totalSub=0;
   (p.subcontractanti||[]).forEach(s=>{
-    const raw=(s.valoare||'').replace(/\./g,'').replace(',','.').replace(/[^0-9.]/g,'');
-    const v=parseFloat(raw);
+    const txt=String(s.valoare||'');
+    const num=x=>parseFloat(x.replace(/\./g,'').replace(',','.'));
+    const mT=txt.match(/(\d[\d.]*(?:,\d+)?)\s*lei\s*total/i);
+    const mF=/^\s*conform/i.test(txt)?null:txt.match(/(\d[\d.]*(?:,\d+)?)\s*lei/i);
+    const v=mT?num(mT[1]):(mF?num(mF[1]):NaN);
     if(!isNaN(v))totalSub+=v;
   });
 
